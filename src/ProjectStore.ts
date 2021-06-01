@@ -1,30 +1,32 @@
 import { makeAutoObservable } from 'mobx';
-import { WebGLRenderer, Texture, RGBFormat } from 'three';
-import { buildShaderFilter } from './filters/buildShaderFilter';
-import { renderTexture } from './renderTexture';
 import React, { useContext } from 'react';
 import { FilterSetting } from './types';
+import { createTextureFromImage, renderWithProgram } from './gl';
+
+const defaultFragmentShader = `void main()
+{
+  vec2 p = gl_FragCoord.xy / iResolution.xy;
+  gl_FragColor = texture2D(iTexture, p);
+}`;
+
+const defaultVertexShader = `void main() {
+  gl_Position = vec4(position, 1.0);
+}`;
 
 interface FilterSettingWithId extends FilterSetting {
   id: string;
 }
 
 class ProjectStore {
-  fragmentShader = `void main() {
-  vec2 p = gl_FragCoord.xy / iResolution.xy;
-  gl_FragColor = texture2D(iTexture, p);
-}`;
-  vertexShader = `void main() {
-  gl_Position = vec4(position, 1.0);
-}`;
+  fragmentShader = defaultFragmentShader;
+  vertexShader = defaultVertexShader;
   tab = 'fragment';
   loading = false;
 
-  previewRenderer = new WebGLRenderer({ antialias: true });
-  previewCanvas = this.previewRenderer.domElement;
+  image?: HTMLImageElement;
+  previewCanvas = document.createElement('canvas'); //this.previewRenderer.domElement;
   width = 0;
   height = 0;
-  imageTexture?: Texture;
   settings: FilterSettingWithId[] = [];
   settingValues: Record<string, any> = {};
 
@@ -43,9 +45,7 @@ class ProjectStore {
       this.width = image.naturalWidth;
       this.height = image.naturalHeight;
 
-      this.imageTexture = new Texture(image);
-      this.imageTexture.format = RGBFormat;
-      this.imageTexture.needsUpdate = true;
+      this.image = image;
 
       this.loading = false;
       this.requestPreviewRender();
@@ -59,8 +59,8 @@ class ProjectStore {
   }
 
   reset() {
-    this.fragmentShader = '';
-    this.vertexShader = '';
+    this.fragmentShader = defaultFragmentShader;
+    this.vertexShader = defaultVertexShader;
     this.tab = 'fragment';
     this.settings = [];
     this.settingValues = {};
@@ -97,29 +97,28 @@ class ProjectStore {
   }
 
   renderCurrentProject(maxSize = 800) {
-    if (!this.imageTexture) {
+    if (!this.image) {
       return;
     }
 
-    const renderer = this.previewRenderer;
+    this.previewCanvas.width = 800;
+    this.previewCanvas.height = 800;
 
-    const { width, height } = this;
+    const gl = this.previewCanvas.getContext('webgl', {
+      premultipliedAlpha: false,
+    })!;
 
-    renderer.setSize(width, height);
+    const texture = createTextureFromImage(gl, this.image);
 
-    let texture = this.imageTexture;
-    if (this.vertexShader || this.fragmentShader) {
-      const filter = buildShaderFilter({
-        id: 'vignette',
-        name: 'Vignette',
-        fragmentShader: this.fragmentShader ? this.fragmentShader : undefined,
-        vertexShader: this.vertexShader ? this.vertexShader : undefined,
-        settings: [],
-      });
-      filter.pass(renderer, texture!, width, height, true);
-    } else {
-      renderTexture(renderer, texture!, width, height, true);
-    }
+    renderWithProgram(
+      gl,
+      this.image.naturalWidth,
+      this.image.naturalHeight,
+      null,
+      texture,
+      this.fragmentShader,
+      this.vertexShader
+    );
   }
 }
 
