@@ -10,8 +10,13 @@ interface FilterSettingWithId extends FilterSetting {
 }
 
 class ProjectStore {
-  fragmentShader = '';
-  vertexShader = '';
+  fragmentShader = `void main() {
+  vec2 p = gl_FragCoord.xy / iResolution.xy;
+  gl_FragColor = texture2D(iTexture, p);
+}`;
+  vertexShader = `void main() {
+  gl_Position = vec4(position, 1.0);
+}`;
   tab = 'fragment';
   loading = false;
 

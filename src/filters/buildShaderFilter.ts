@@ -25,8 +25,8 @@ export function buildShaderFilter(props: ShaderFilterBuildProps): Filter {
     iTexture: new Uniform(null),
   };
 
-  let shaderPrefix = `#include <common>
-
+  let shaderPrefix = `precision highp float;
+  
   uniform sampler2D iTexture;
   uniform vec3 iResolution;
 `;
@@ -43,8 +43,11 @@ export function buildShaderFilter(props: ShaderFilterBuildProps): Filter {
           uniforms[setting.key] = new Uniform(new Vector2());
           break;
         case FilterSettingType.FLOAT:
-        case FilterSettingType.INTEGER:
           shaderPrefix += `uniform float ${setting.key};\n`;
+          uniforms[setting.key] = new Uniform(setting.defaultValue);
+          break;
+        case FilterSettingType.INTEGER:
+          shaderPrefix += `uniform int ${setting.key};\n`;
           uniforms[setting.key] = new Uniform(setting.defaultValue);
           break;
         case FilterSettingType.COLOR:
