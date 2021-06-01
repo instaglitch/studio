@@ -1,13 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { configure } from 'mobx';
-import { editor } from 'monaco-editor';
 
 import { App } from './App';
 import reportWebVitals from './reportWebVitals';
-import theme from './theme.json';
-
-editor.defineTheme('instaglitch', theme as any);
 
 configure({
   enforceActions: 'never',

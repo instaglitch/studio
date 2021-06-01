@@ -1,5 +1,6 @@
 import React from 'react';
 
+import './glsl';
 import './App.scss';
 import 'rc-slider/assets/index.css';
 

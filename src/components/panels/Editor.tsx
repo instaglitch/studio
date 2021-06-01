@@ -1,14 +1,13 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import MonacoEditor from 'react-monaco-editor';
+import { Controlled as CodeMirror } from 'react-codemirror2';
 
 import { useProjectStore } from '../../ProjectStore';
 
 export const Editor: React.FC = observer(() => {
   const projectStore = useProjectStore();
-  const editorRef = useRef<MonacoEditor>(null);
 
-  const onResize = useCallback(() => editorRef.current?.editor?.layout(), []);
+  const onResize = useCallback(() => {}, []);
   useEffect(() => {
     window.addEventListener('resize', onResize);
 
@@ -19,26 +18,38 @@ export const Editor: React.FC = observer(() => {
     case 'vertex':
       return (
         <div className="editor panel flex">
-          <MonacoEditor
-            language="glsl"
-            theme="instaglitch"
+          <CodeMirror
+            key="vertex"
+            options={{
+              mode: 'x-shader/x-fragment',
+              theme: 'dracula',
+              lineNumbers: true,
+              tabSize: 2,
+            }}
             value={projectStore.vertexShader}
-            onChange={val => (projectStore.vertexShader = val)}
-            options={{ automaticLayout: true }}
-            ref={editorRef}
+            onBeforeChange={(editor, data, value) =>
+              (projectStore.vertexShader = value)
+            }
+            onChange={(editor, data, value) => {}}
           />
         </div>
       );
     case 'fragment':
       return (
         <div className="editor panel flex">
-          <MonacoEditor
-            language="glsl"
-            theme="instaglitch"
+          <CodeMirror
+            key="fragment"
+            options={{
+              mode: 'x-shader/x-fragment',
+              theme: 'dracula',
+              lineNumbers: true,
+              tabSize: 2,
+            }}
             value={projectStore.fragmentShader}
-            onChange={val => (projectStore.fragmentShader = val)}
-            options={{ automaticLayout: true }}
-            ref={editorRef}
+            onBeforeChange={(editor, data, value) =>
+              (projectStore.fragmentShader = value)
+            }
+            onChange={(editor, data, value) => {}}
           />
         </div>
       );
