@@ -2,20 +2,6 @@ import { Glue } from './Glue';
 import { GluePreprocessor } from './GluePreprocessor';
 import { GlueUniforms } from './GlueUniforms';
 
-export enum GlueProgramSettingType {
-  OFFSET,
-  COLOR,
-  INTEGER,
-  FLOAT,
-  BOOLEAN,
-}
-
-export interface GlueProgramSetting {
-  key: string;
-  type: GlueProgramSettingType;
-  defaultValue: any;
-}
-
 export class GlueProgram {
   readonly uniforms: GlueUniforms;
 
@@ -28,8 +14,7 @@ export class GlueProgram {
     private glue: Glue,
     fragmentShaderSource: string,
     vertexShaderSource: string,
-    preprocess = true,
-    settings?: GlueProgramSetting[]
+    preprocess = true
   ) {
     if (preprocess) {
       fragmentShaderSource =

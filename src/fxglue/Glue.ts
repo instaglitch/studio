@@ -1,4 +1,4 @@
-import { GlueProgram, GlueProgramSetting } from './GlueProgram';
+import { GlueProgram } from './GlueProgram';
 
 const defaultFragmentShader = `void main()
 {
@@ -45,8 +45,7 @@ export class Glue {
   registerGlueProgram(
     name: string,
     fragmentShader?: string,
-    vertexShader?: string,
-    settings?: GlueProgramSetting[]
+    vertexShader?: string
   ) {
     if (!fragmentShader) {
       fragmentShader = defaultFragmentShader;
@@ -61,8 +60,7 @@ export class Glue {
       this,
       fragmentShader,
       vertexShader,
-      true,
-      settings
+      true
     );
 
     program.setSize(this._width, this._height);
