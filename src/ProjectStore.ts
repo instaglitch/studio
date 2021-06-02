@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import React, { useContext } from 'react';
 import { FilterSetting } from './types';
-import { createTextureFromImage, renderWithProgram } from './gl';
+import { Glue } from './fxglue/Glue';
 
 const defaultFragmentShader = `void main()
 {
@@ -108,17 +108,11 @@ class ProjectStore {
       premultipliedAlpha: false,
     })!;
 
-    const texture = createTextureFromImage(gl, this.image);
-
-    renderWithProgram(
-      gl,
-      this.image.naturalWidth,
-      this.image.naturalHeight,
-      null,
-      texture,
-      this.fragmentShader,
-      this.vertexShader
-    );
+    const glue = new Glue(gl);
+    glue.setImage(this.image);
+    glue.registerGlueProgram('filter', this.fragmentShader, this.vertexShader);
+    glue.program('filter')?.apply();
+    glue.finalize();
   }
 }
 
