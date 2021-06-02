@@ -117,9 +117,27 @@ export class Glue {
     return this._programs[name];
   }
 
-  finalize() {
+  render() {
     this._final = true;
     this.program('_default')?.apply();
+  }
+
+  dispose() {
+    if (this._imageTexture) {
+      this.gl.deleteTexture(this._imageTexture);
+    }
+
+    for (const texture of this._renderTextures) {
+      this.gl.deleteTexture(texture);
+    }
+
+    for (const framebuffer of this._renderFramebuffers) {
+      this.gl.deleteFramebuffer(framebuffer);
+    }
+
+    for (const program of Object.values(this._programs)) {
+      program.dispose();
+    }
   }
 
   switchFramebuffer() {

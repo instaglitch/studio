@@ -112,7 +112,8 @@ class ProjectStore {
     glue.setImage(this.image);
     glue.registerGlueProgram('filter', this.fragmentShader, this.vertexShader);
     glue.program('filter')?.apply();
-    glue.finalize();
+    glue.render();
+    glue.dispose();
   }
 }
 

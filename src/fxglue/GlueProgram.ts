@@ -5,6 +5,8 @@ import { GlueUniforms } from './GlueUniforms';
 export class GlueProgram {
   readonly uniforms: GlueUniforms;
 
+  private _vertexShader: WebGLShader;
+  private _fragmentShader: WebGLShader;
   private _program: WebGLProgram;
   private _width = 0;
   private _height = 0;
@@ -33,8 +35,14 @@ export class GlueProgram {
 
     this._program = program;
 
-    this.attachShader(fragmentShaderSource, gl.FRAGMENT_SHADER);
-    this.attachShader(vertexShaderSource, gl.VERTEX_SHADER);
+    this._fragmentShader = this.attachShader(
+      fragmentShaderSource,
+      gl.FRAGMENT_SHADER
+    );
+    this._vertexShader = this.attachShader(
+      vertexShaderSource,
+      gl.VERTEX_SHADER
+    );
 
     gl.linkProgram(program);
 
@@ -77,6 +85,12 @@ export class GlueProgram {
     gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
 
+  dispose() {
+    this.gl.deleteProgram(this._program);
+    this.gl.deleteShader(this._vertexShader);
+    this.gl.deleteShader(this._fragmentShader);
+  }
+
   private attachShader(code: string, type: number) {
     const gl = this.gl;
 
@@ -94,5 +108,6 @@ export class GlueProgram {
     }
 
     gl.attachShader(this._program, shader);
+    return shader;
   }
 }
