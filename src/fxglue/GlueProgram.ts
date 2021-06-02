@@ -1,7 +1,6 @@
 import { Glue } from './Glue';
 import { GluePreprocessor } from './GluePreprocessor';
 import { GlueUniforms } from './GlueUniforms';
-import { glueCreateShader } from './GlueUtils';
 
 export enum GlueProgramSettingType {
   OFFSET,
