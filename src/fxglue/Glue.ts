@@ -15,12 +15,51 @@ export class Glue {
   private _imageTexture?: WebGLTexture;
   private _width = 0;
   private _height = 0;
+  private _renderTextures: WebGLTexture[] = [];
+  private _renderFramebuffers: WebGLFramebuffer[] = [];
+  private _currentFramebuffer = -1;
+  private _final = false;
 
-  constructor(private gl: WebGLRenderingContext) {}
+  constructor(private gl: WebGLRenderingContext) {
+    this.registerGlueProgram('_default');
+
+    this.addFramebuffer();
+    this.addFramebuffer();
+  }
+
+  private addFramebuffer() {
+    const [texture, framebuffer] = this.createFramebuffer(1, 1);
+    this._renderTextures.push(texture);
+    this._renderFramebuffers.push(framebuffer);
+  }
+
+  setScale(scale: number) {
+    this.setSize(this._width * scale, this._height * scale);
+  }
 
   setSize(width: number, height: number) {
     for (const program of Object.values(this._programs)) {
       program.setSize(width, height);
+    }
+
+    const gl = this.gl;
+    for (const texture of this._renderTextures) {
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        gl.RGBA,
+        width,
+        height,
+        0,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        null
+      );
+    }
+
+    if (this._imageTexture) {
+      gl.bindTexture(gl.TEXTURE_2D, this._imageTexture);
     }
 
     this._width = width;
@@ -47,6 +86,10 @@ export class Glue {
     fragmentShader?: string,
     vertexShader?: string
   ) {
+    if (this._programs[name]) {
+      throw new Error('A program with this name already exists: ' + name);
+    }
+
     if (!fragmentShader) {
       fragmentShader = defaultFragmentShader;
     }
@@ -74,7 +117,35 @@ export class Glue {
     return this._programs[name];
   }
 
-  finalize() {}
+  finalize() {
+    this._final = true;
+    this.program('_default')?.apply();
+  }
+
+  switchFramebuffer() {
+    const gl = this.gl;
+
+    if (this._currentFramebuffer === -1) {
+      this._currentFramebuffer = 0;
+    } else {
+      gl.bindTexture(
+        gl.TEXTURE_2D,
+        this._renderTextures[this._currentFramebuffer]
+      );
+      this._currentFramebuffer = this._currentFramebuffer === 0 ? 1 : 0;
+    }
+
+    gl.bindFramebuffer(
+      gl.FRAMEBUFFER,
+      this._final ? null : this._renderFramebuffers[this._currentFramebuffer]
+    );
+    this._final = false;
+  }
+
+  resetFramebuffer() {
+    const gl = this.gl;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  }
 
   setRectangle(
     gl: WebGLRenderingContext,
@@ -129,6 +200,11 @@ export class Glue {
     );
 
     const framebuffer = gl.createFramebuffer();
+
+    if (!framebuffer) {
+      throw new Error('Unable to create a framebuffer.');
+    }
+
     gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
 
     gl.framebufferTexture2D(

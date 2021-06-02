@@ -54,9 +54,9 @@ export class GlueProgram {
   }
 
   apply() {
+    this.glue.switchFramebuffer();
+
     const gl = this.gl;
-    // gl.bindTexture(gl.TEXTURE_2D, inputTexture);
-    // gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
     gl.clearColor(0, 0, 0, 0);
