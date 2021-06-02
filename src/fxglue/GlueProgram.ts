@@ -10,6 +10,7 @@ export class GlueProgram {
   private _program: WebGLProgram;
   private _width = 0;
   private _height = 0;
+  private _disposed = false;
 
   constructor(
     private gl: WebGLRenderingContext,
@@ -55,6 +56,8 @@ export class GlueProgram {
   }
 
   setSize(width: number, height: number) {
+    this.checkDisposed();
+
     this._width = width;
     this._height = height;
 
@@ -62,6 +65,8 @@ export class GlueProgram {
   }
 
   apply() {
+    this.checkDisposed();
+
     this.glue.switchFramebuffer();
 
     const gl = this.gl;
@@ -89,6 +94,13 @@ export class GlueProgram {
     this.gl.deleteProgram(this._program);
     this.gl.deleteShader(this._vertexShader);
     this.gl.deleteShader(this._fragmentShader);
+    this._disposed = true;
+  }
+
+  private checkDisposed() {
+    if (this._disposed) {
+      throw new Error('This GlueProgram object has been disposed.');
+    }
   }
 
   private attachShader(code: string, type: number) {

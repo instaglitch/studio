@@ -19,6 +19,7 @@ export class Glue {
   private _renderFramebuffers: WebGLFramebuffer[] = [];
   private _currentFramebuffer = -1;
   private _final = false;
+  private _disposed = false;
 
   constructor(private gl: WebGLRenderingContext) {
     this.registerGlueProgram('_default');
@@ -27,17 +28,15 @@ export class Glue {
     this.addFramebuffer();
   }
 
-  private addFramebuffer() {
-    const [texture, framebuffer] = this.createFramebuffer(1, 1);
-    this._renderTextures.push(texture);
-    this._renderFramebuffers.push(framebuffer);
-  }
-
   setScale(scale: number) {
+    this.checkDisposed();
+
     this.setSize(this._width * scale, this._height * scale);
   }
 
   setSize(width: number, height: number) {
+    this.checkDisposed();
+
     for (const program of Object.values(this._programs)) {
       program.setSize(width, height);
     }
@@ -67,6 +66,8 @@ export class Glue {
   }
 
   setImage(image: HTMLImageElement) {
+    this.checkDisposed();
+
     if (!image.complete || image.naturalHeight === 0) {
       throw new Error('Image is not loaded.');
     }
@@ -86,6 +87,8 @@ export class Glue {
     fragmentShader?: string,
     vertexShader?: string
   ) {
+    this.checkDisposed();
+
     if (this._programs[name]) {
       throw new Error('A program with this name already exists: ' + name);
     }
@@ -114,10 +117,12 @@ export class Glue {
   }
 
   program(name: string): GlueProgram | undefined {
+    this.checkDisposed();
     return this._programs[name];
   }
 
   render() {
+    this.checkDisposed();
     this._final = true;
     this.program('_default')?.apply();
   }
@@ -138,9 +143,17 @@ export class Glue {
     for (const program of Object.values(this._programs)) {
       program.dispose();
     }
+
+    this._imageTexture = undefined;
+    this._renderFramebuffers = [];
+    this._renderTextures = [];
+    this._programs = {};
+    this._disposed = true;
   }
 
   switchFramebuffer() {
+    this.checkDisposed();
+
     const gl = this.gl;
 
     if (this._currentFramebuffer === -1) {
@@ -161,6 +174,8 @@ export class Glue {
   }
 
   resetFramebuffer() {
+    this.checkDisposed();
+
     const gl = this.gl;
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   }
@@ -181,6 +196,18 @@ export class Glue {
       new Float32Array([x1, y1, x2, y1, x1, y2, x1, y2, x2, y1, x2, y2]),
       gl.STATIC_DRAW
     );
+  }
+
+  private checkDisposed() {
+    if (this._disposed) {
+      throw new Error('This Glue object has been disposed.');
+    }
+  }
+
+  private addFramebuffer() {
+    const [texture, framebuffer] = this.createFramebuffer(1, 1);
+    this._renderTextures.push(texture);
+    this._renderFramebuffers.push(framebuffer);
   }
 
   private createTexture() {
