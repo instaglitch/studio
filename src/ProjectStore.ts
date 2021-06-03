@@ -2,6 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import React, { useContext } from 'react';
 import { FilterSetting } from './types';
 import { Glue } from './fxglue/Glue';
+import { GlueProgramError } from './fxglue/GlueProgram';
 
 const defaultFragmentShader = `void main()
 {
@@ -20,6 +21,8 @@ interface FilterSettingWithId extends FilterSetting {
 class ProjectStore {
   fragmentShader = defaultFragmentShader;
   vertexShader = defaultVertexShader;
+  fragmentShaderErrors: Record<number, string[]> = {};
+  vertexShaderErrors: Record<number, string[]> = {};
   tab = 'fragment';
   loading = false;
 
@@ -106,7 +109,18 @@ class ProjectStore {
     const glue = new Glue(gl);
     glue.setSize(this.image.naturalWidth, this.image.naturalHeight);
     glue.image(this.image);
-    glue.registerProgram('filter', this.fragmentShader, this.vertexShader);
+
+    try {
+      this.fragmentShaderErrors = {};
+      this.vertexShaderErrors = {};
+      glue.registerProgram('filter', this.fragmentShader, this.vertexShader);
+    } catch (e) {
+      if (e instanceof GlueProgramError) {
+        this.fragmentShaderErrors = e.fragmentShaderErrors;
+        this.vertexShaderErrors = e.vertexShaderErrors;
+      }
+    }
+
     glue.program('filter')?.apply();
     glue.render();
     glue.dispose();

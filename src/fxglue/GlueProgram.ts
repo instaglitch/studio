@@ -2,11 +2,18 @@ import { Glue } from './Glue';
 import { GluePreprocessor } from './GluePreprocessor';
 import { GlueUniforms } from './GlueUniforms';
 
+export class GlueProgramError extends Error {
+  vertexShaderErrors: Record<number, string[]> = {};
+  fragmentShaderErrors: Record<number, string[]> = {};
+}
+
 export class GlueProgram {
   readonly uniforms: GlueUniforms;
 
-  private _vertexShader: WebGLShader;
-  private _fragmentShader: WebGLShader;
+  private _vertexShader?: WebGLShader;
+  private _fragmentShader?: WebGLShader;
+  private _vertexShaderErrors: Record<number, string[]> = {};
+  private _fragmentShaderErrors: Record<number, string[]> = {};
   private _program: WebGLProgram;
   private _width = 0;
   private _height = 0;
@@ -16,17 +23,13 @@ export class GlueProgram {
     private gl: WebGLRenderingContext,
     private glue: Glue,
     fragmentShaderSource: string,
-    vertexShaderSource: string,
-    preprocess = true
+    vertexShaderSource: string
   ) {
-    if (preprocess) {
-      fragmentShaderSource =
-        GluePreprocessor.processShader(fragmentShaderSource);
-      vertexShaderSource = GluePreprocessor.processShader(
-        vertexShaderSource,
-        true
-      );
-    }
+    const fragmentResult = GluePreprocessor.processShader(fragmentShaderSource);
+    const vertexResult = GluePreprocessor.processShader(
+      vertexShaderSource,
+      true
+    );
 
     const program = gl.createProgram();
 
@@ -36,14 +39,32 @@ export class GlueProgram {
 
     this._program = program;
 
-    this._fragmentShader = this.attachShader(
-      fragmentShaderSource,
-      gl.FRAGMENT_SHADER
-    );
-    this._vertexShader = this.attachShader(
-      vertexShaderSource,
-      gl.VERTEX_SHADER
-    );
+    let shader = this.attachShader(fragmentResult.source, gl.FRAGMENT_SHADER);
+
+    if (typeof shader === 'string') {
+      this._fragmentShaderErrors = this.parseErrors(
+        shader,
+        fragmentResult.lineMap
+      );
+    } else {
+      this._fragmentShader = shader!;
+    }
+
+    shader = this.attachShader(vertexResult.source, gl.VERTEX_SHADER);
+
+    if (typeof shader === 'string') {
+      this._vertexShaderErrors = this.parseErrors(shader, vertexResult.lineMap);
+    } else {
+      this._vertexShader = shader!;
+    }
+
+    if (!this._fragmentShader || !this._vertexShader) {
+      gl.deleteProgram(program);
+      const error = new GlueProgramError('Could not compile WebGL shader.');
+      error.vertexShaderErrors = this._vertexShaderErrors;
+      error.fragmentShaderErrors = this._fragmentShaderErrors;
+      throw error;
+    }
 
     gl.linkProgram(program);
 
@@ -61,6 +82,14 @@ export class GlueProgram {
     const positionLocation = gl.getAttribLocation(this._program, 'position');
     gl.enableVertexAttribArray(positionLocation);
     gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+  }
+
+  get vertexShaderErrors() {
+    return this._vertexShaderErrors;
+  }
+
+  get fragmentShaderErrors() {
+    return this._fragmentShaderErrors;
   }
 
   setSize(width: number, height: number) {
@@ -92,9 +121,40 @@ export class GlueProgram {
 
   dispose() {
     this.gl.deleteProgram(this._program);
-    this.gl.deleteShader(this._vertexShader);
-    this.gl.deleteShader(this._fragmentShader);
+    this.gl.deleteShader(this._vertexShader!);
+    this.gl.deleteShader(this._fragmentShader!);
     this._disposed = true;
+  }
+
+  private parseErrors(log: string, lineMap: Record<number, number>) {
+    const lines = log.split('\n');
+    const errors: Record<number, string[]> = {};
+    for (const line of lines) {
+      if (line.startsWith('ERROR: ')) {
+        const split = line.split(':');
+        split.shift();
+        split.shift();
+        const position = split.shift();
+        const message = split.join(':').trim();
+
+        if (position && lineMap[parseInt(position)]) {
+          const realLine = lineMap[parseInt(position)];
+          if (!errors[realLine]) {
+            errors[realLine] = [];
+          }
+
+          errors[realLine].push(message);
+        } else {
+          if (!errors[0]) {
+            errors[0] = [];
+          }
+
+          errors[0].push(message);
+        }
+      }
+    }
+
+    return errors;
   }
 
   private checkDisposed() {
@@ -116,7 +176,7 @@ export class GlueProgram {
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
       const info = gl.getShaderInfoLog(shader);
-      throw new Error('Could not compile WebGL program. \n\n' + info);
+      return info;
     }
 
     gl.attachShader(this._program, shader);

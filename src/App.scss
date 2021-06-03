@@ -350,3 +350,40 @@ a {
   bottom: 0;
   height: 100%;
 }
+
+.CodeMirror-gutter.errors {
+  width: 20px;
+}
+
+.CodeMirror-gutter-elt {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+span.error-icon {
+  position: relative;
+  display: block;
+  width: 13px;
+  height: 13px;
+  background: url('./error.svg');
+
+  pre {
+    position: absolute;
+    bottom: 5px;
+    width: 300px;
+    background: #11111a;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &:hover {
+    pre {
+      opacity: 1;
+    }
+  }
+}

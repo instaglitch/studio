@@ -159,8 +159,7 @@ export class Glue {
       this.gl,
       this,
       fragmentShader,
-      vertexShader,
-      true
+      vertexShader
     );
 
     program.setSize(this._width, this._height);
