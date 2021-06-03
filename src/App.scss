@@ -370,15 +370,17 @@ span.error-icon {
 
   pre {
     position: absolute;
-    bottom: 5px;
+    top: -13px;
+    left: 20px;
+    padding: 5px;
     width: 300px;
     background: #11111a;
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: pre-wrap;
     z-index: 99999;
-    opacity: 0;
     pointer-events: none;
+    opacity: 0;
   }
 
   &:hover {
