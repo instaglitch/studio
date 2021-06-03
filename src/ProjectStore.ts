@@ -18,6 +18,8 @@ interface FilterSettingWithId extends FilterSetting {
   id: string;
 }
 
+let timeout: any = undefined;
+
 class ProjectStore {
   fragmentShader = defaultFragmentShader;
   vertexShader = defaultVertexShader;
@@ -88,6 +90,14 @@ class ProjectStore {
       }
     });
     fileInput.click();
+  }
+
+  requestDebouncedPreviewRender() {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+
+    setTimeout(() => this.requestPreviewRender(), 1000);
   }
 
   requestPreviewRender() {

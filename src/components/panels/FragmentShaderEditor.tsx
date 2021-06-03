@@ -11,7 +11,10 @@ export const FragmentShaderEditor: React.FC = observer(() => {
     <div className="editor panel flex">
       <ShaderEditor
         value={projectStore.fragmentShader}
-        onChange={value => (projectStore.fragmentShader = value)}
+        onChange={value => {
+          projectStore.fragmentShader = value;
+          projectStore.requestDebouncedPreviewRender();
+        }}
         errors={projectStore.fragmentShaderErrors}
       />
     </div>

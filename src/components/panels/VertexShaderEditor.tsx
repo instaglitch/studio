@@ -11,7 +11,10 @@ export const VertexShaderEditor: React.FC = observer(() => {
     <div className="editor panel flex">
       <ShaderEditor
         value={projectStore.vertexShader}
-        onChange={value => (projectStore.vertexShader = value)}
+        onChange={value => {
+          projectStore.vertexShader = value;
+          projectStore.requestDebouncedPreviewRender();
+        }}
         errors={projectStore.vertexShaderErrors}
       />
     </div>
