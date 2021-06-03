@@ -25,26 +25,21 @@ class ProjectStore {
 
   image?: HTMLImageElement;
   previewCanvas = document.createElement('canvas'); //this.previewRenderer.domElement;
-  width = 0;
-  height = 0;
   settings: FilterSettingWithId[] = [];
   settingValues: Record<string, any> = {};
 
   constructor() {
     makeAutoObservable(this);
 
-    this.loadImage();
+    this.loadImage('/preview.jpg');
   }
 
-  loadImage() {
+  loadImage(src: string) {
     const image = new Image();
-    image.src = '/preview.jpg';
+    image.src = src;
     this.loading = true;
 
     const onload = () => {
-      this.width = image.naturalWidth;
-      this.height = image.naturalHeight;
-
       this.image = image;
 
       this.loading = false;
@@ -109,8 +104,9 @@ class ProjectStore {
     })!;
 
     const glue = new Glue(gl);
-    glue.setImage(this.image);
-    glue.registerGlueProgram('filter', this.fragmentShader, this.vertexShader);
+    glue.setSize(this.image.naturalWidth, this.image.naturalHeight);
+    glue.image(this.image);
+    glue.registerProgram('filter', this.fragmentShader, this.vertexShader);
     glue.program('filter')?.apply();
     glue.render();
     glue.dispose();

@@ -53,6 +53,14 @@ export class GlueProgram {
     }
 
     this.uniforms = new GlueUniforms(gl, program);
+
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    this.glue.setRectangle(gl, -1, -1, 2, 2);
+
+    const positionLocation = gl.getAttribLocation(this._program, 'position');
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
   }
 
   setSize(width: number, height: number) {
@@ -76,14 +84,6 @@ export class GlueProgram {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     gl.useProgram(this._program);
-
-    const positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    this.glue.setRectangle(gl, -1, -1, 2, 2);
-
-    const positionLocation = gl.getAttribLocation(this._program, 'position');
-    gl.enableVertexAttribArray(positionLocation);
-    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
     this.uniforms.set('iResolution', [this._width, this._height, 1]);
 

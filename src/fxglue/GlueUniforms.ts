@@ -7,7 +7,10 @@ interface GlueUniformInfo {
 export class GlueUniforms {
   private uniforms: Record<string, GlueUniformInfo> = {};
 
-  constructor(private gl: WebGLRenderingContext, program: WebGLProgram) {
+  constructor(
+    private gl: WebGLRenderingContext,
+    private program: WebGLProgram
+  ) {
     const n = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
 
     for (let i = 0; i < n; ++i) {
@@ -33,7 +36,9 @@ export class GlueUniforms {
   }
 
   set(name: string, value: any) {
+    this.gl.useProgram(this.program);
     const uniform = this.uniforms[name];
+
     if (!uniform) {
       return;
     }
@@ -77,6 +82,9 @@ export class GlueUniforms {
         break;
       case this.gl.FLOAT_MAT4:
         this.gl.uniformMatrix4fv(uniform.location, false, value);
+        break;
+      case this.gl.SAMPLER_2D:
+        this.gl.uniform1i(uniform.location, value);
         break;
     }
   }

@@ -10,19 +10,55 @@ const defaultVertexShader = `void main() {
   gl_Position = vec4(position, 1.0);
 }`;
 
+const blendFragmentShader = `uniform sampler2D iImage;
+uniform vec2 iSize;
+uniform vec2 iOffset;
+uniform float iOpacity;
+uniform int iMode;
+
+void main()
+{
+  vec2 p = gl_FragCoord.xy / iResolution.xy;
+  vec2 uv = gl_FragCoord.xy / iResolution.xy;
+
+  uv.x -= iOffset.x;
+  uv.y += iOffset.y - 1.0 + iSize.y / iResolution.y;
+  uv *= iResolution.xy / iSize.xy;
+
+  vec4 src = texture2D(iTexture, p);
+  gl_FragColor = src;
+  
+  if (uv.x >= 0.0 && uv.y >= 0.0 && uv.x <= 1.0 && uv.y <= 1.0) {
+    vec4 dest = texture2D(iImage, uv);
+    dest.a *= iOpacity;
+    
+    if (iMode == 0) { // NORMAL
+      dest *= dest.a;
+      gl_FragColor *= 1.0 - dest.a;
+      gl_FragColor += dest;
+    } else if (iMode == 1) { // MULTIPLY
+      if (dest.a > 0.0) {
+        gl_FragColor.rgb = (dest.rgb / dest.a) * ((1.0 - src.a) + src.rgb);
+        gl_FragColor.a = min(src.a + dest.a - src.a * dest.a, 1.0);
+        // gl_FragColor.rgb *= mult.a;
+      }
+    }
+  }
+}`;
+
 export class Glue {
   private _programs: Record<string, GlueProgram> = {};
-  private _imageTexture?: WebGLTexture;
   private _width = 0;
   private _height = 0;
   private _renderTextures: WebGLTexture[] = [];
   private _renderFramebuffers: WebGLFramebuffer[] = [];
-  private _currentFramebuffer = -1;
+  private _currentFramebuffer = 0;
   private _final = false;
   private _disposed = false;
 
   constructor(private gl: WebGLRenderingContext) {
-    this.registerGlueProgram('_default');
+    this.registerProgram('_default');
+    this.registerProgram('_blend', blendFragmentShader);
 
     this.addFramebuffer();
     this.addFramebuffer();
@@ -42,6 +78,8 @@ export class Glue {
     }
 
     const gl = this.gl;
+    gl.activeTexture(gl.TEXTURE0);
+
     for (const texture of this._renderTextures) {
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.texImage2D(
@@ -57,15 +95,16 @@ export class Glue {
       );
     }
 
-    if (this._imageTexture) {
-      gl.bindTexture(gl.TEXTURE_2D, this._imageTexture);
-    }
+    gl.bindTexture(
+      gl.TEXTURE_2D,
+      this._renderTextures[this._currentFramebuffer]
+    );
 
     this._width = width;
     this._height = height;
   }
 
-  setImage(image: HTMLImageElement) {
+  image(image: HTMLImageElement, x = 0, y = 0, opacity = 1, mode = 0) {
     this.checkDisposed();
 
     if (!image.complete || image.naturalHeight === 0) {
@@ -73,16 +112,31 @@ export class Glue {
     }
 
     const gl = this.gl;
-    const texture = this.createTexture();
+
+    const target = gl.TEXTURE1;
+
+    const texture = this.createTexture(target);
 
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-    this._imageTexture = texture;
 
-    this.setSize(image.naturalWidth, image.naturalHeight);
+    this.program('_blend')?.uniforms.set('iImage', 1);
+    this.program('_blend')?.uniforms.set('iSize', [
+      image.naturalHeight,
+      image.naturalWidth,
+    ]);
+    this.program('_blend')?.uniforms.set('iOffset', [
+      x / this._width,
+      y / this._height,
+    ]);
+    this.program('_blend')?.uniforms.set('iMode', mode);
+    this.program('_blend')?.uniforms.set('iOpacity', opacity);
+    this.program('_blend')?.apply();
+
+    gl.deleteTexture(texture);
   }
 
-  registerGlueProgram(
+  registerProgram(
     name: string,
     fragmentShader?: string,
     vertexShader?: string
@@ -128,10 +182,6 @@ export class Glue {
   }
 
   dispose() {
-    if (this._imageTexture) {
-      this.gl.deleteTexture(this._imageTexture);
-    }
-
     for (const texture of this._renderTextures) {
       this.gl.deleteTexture(texture);
     }
@@ -144,7 +194,6 @@ export class Glue {
       program.dispose();
     }
 
-    this._imageTexture = undefined;
     this._renderFramebuffers = [];
     this._renderTextures = [];
     this._programs = {};
@@ -155,16 +204,13 @@ export class Glue {
     this.checkDisposed();
 
     const gl = this.gl;
+    gl.activeTexture(gl.TEXTURE0);
 
-    if (this._currentFramebuffer === -1) {
-      this._currentFramebuffer = 0;
-    } else {
-      gl.bindTexture(
-        gl.TEXTURE_2D,
-        this._renderTextures[this._currentFramebuffer]
-      );
-      this._currentFramebuffer = this._currentFramebuffer === 0 ? 1 : 0;
-    }
+    gl.bindTexture(
+      gl.TEXTURE_2D,
+      this._renderTextures[this._currentFramebuffer]
+    );
+    this._currentFramebuffer = this._currentFramebuffer === 0 ? 1 : 0;
 
     gl.bindFramebuffer(
       gl.FRAMEBUFFER,
@@ -210,13 +256,19 @@ export class Glue {
     this._renderFramebuffers.push(framebuffer);
   }
 
-  private createTexture() {
+  private createTexture(target?: number) {
     const gl = this.gl;
     const texture = gl.createTexture();
 
     if (!texture) {
       throw new Error('Unable to create texture.');
     }
+
+    if (!target) {
+      target = gl.TEXTURE0;
+    }
+
+    gl.activeTexture(target);
 
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
