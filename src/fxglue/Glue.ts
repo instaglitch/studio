@@ -48,6 +48,8 @@ void main()
 
 export class Glue {
   private _programs: Record<string, GlueProgram> = {};
+  private _textures: Record<string, WebGLTexture> = {};
+  private _textureSizes: Record<string, [number, number]> = {};
   private _width = 0;
   private _height = 0;
   private _renderTextures: WebGLTexture[] = [];
@@ -104,27 +106,20 @@ export class Glue {
     this._height = height;
   }
 
-  image(image: HTMLImageElement, x = 0, y = 0, opacity = 1, mode = 0) {
+  image(image: HTMLImageElement | string, x = 0, y = 0, opacity = 1, mode = 0) {
     this.checkDisposed();
 
-    if (!image.complete || image.naturalHeight === 0) {
-      throw new Error('Image is not loaded.');
+    let size = [];
+    if (typeof image === 'string') {
+      this.useImage(image);
+      size = this._textureSizes[image];
+    } else {
+      this.registerImage('_temp', image);
+      size = [image.naturalWidth, image.naturalHeight];
     }
 
-    const gl = this.gl;
-
-    const target = gl.TEXTURE1;
-
-    const texture = this.createTexture(target);
-
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-
     this.program('_blend')?.uniforms.set('iImage', 1);
-    this.program('_blend')?.uniforms.set('iSize', [
-      image.naturalHeight,
-      image.naturalWidth,
-    ]);
+    this.program('_blend')?.uniforms.set('iSize', size);
     this.program('_blend')?.uniforms.set('iOffset', [
       x / this._width,
       y / this._height,
@@ -133,7 +128,52 @@ export class Glue {
     this.program('_blend')?.uniforms.set('iOpacity', opacity);
     this.program('_blend')?.apply();
 
-    gl.deleteTexture(texture);
+    if (typeof image !== 'string') {
+      this.deregisterImage('_temp');
+    }
+  }
+
+  registerImage(name: string, image: HTMLImageElement) {
+    this.checkDisposed();
+
+    if (!image.complete || image.naturalHeight === 0) {
+      throw new Error('Image is not loaded.');
+    }
+
+    if (this._textures[name]) {
+      throw new Error('A texture with this name already exists: ' + name);
+    }
+
+    const gl = this.gl;
+    const target = gl.TEXTURE1;
+    const texture = this.createTexture(target);
+
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+    this._textures[name] = texture;
+    this._textureSizes[name] = [image.naturalWidth, image.naturalHeight];
+  }
+
+  useImage(name: string) {
+    if (!this._textures[name]) {
+      throw new Error("A texture with this name doesn't exist: " + name);
+    }
+
+    const gl = this.gl;
+    gl.activeTexture(gl.TEXTURE1);
+
+    gl.bindTexture(gl.TEXTURE_2D, this._textures[name]);
+  }
+
+  deregisterImage(name: string) {
+    this.checkDisposed();
+
+    if (this._textures[name]) {
+      this.gl.deleteTexture(this._textures[name]);
+      delete this._textures[name];
+      delete this._textureSizes[name];
+    }
   }
 
   registerProgram(
@@ -169,6 +209,13 @@ export class Glue {
     return program;
   }
 
+  deregisterProgram(name: string) {
+    this.checkDisposed();
+
+    this._programs[name]?.dispose();
+    delete this._programs[name];
+  }
+
   program(name: string): GlueProgram | undefined {
     this.checkDisposed();
     return this._programs[name];
@@ -181,6 +228,10 @@ export class Glue {
   }
 
   dispose() {
+    if (this._disposed) {
+      return;
+    }
+
     for (const texture of this._renderTextures) {
       this.gl.deleteTexture(texture);
     }

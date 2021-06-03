@@ -120,6 +120,10 @@ export class GlueProgram {
   }
 
   dispose() {
+    if (this._disposed) {
+      return;
+    }
+
     this.gl.deleteProgram(this._program);
     this.gl.deleteShader(this._vertexShader!);
     this.gl.deleteShader(this._fragmentShader!);
