@@ -5,12 +5,14 @@ const imports: Record<string, string> = {
 #define RECIPROCAL_PI 0.3183098861837907
 #define RECIPROCAL_PI2 0.15915494309189535
 #define EPSILON 1e-6
+#define E 2.718281828459045
 
 float pow2(const in float x) { return x*x; }
 float pow3(const in float x) { return x*x*x; }
 float pow4(const in float x) { float x2 = x*x; return x2*x2; }
 
-float atan2(const in float a, const in float b) { return asin(a) > 0.0 ? acos(b) : -acos(b); }`,
+float atan2(const in float y, const in float x) { return x == 0.0 ? sign(y)*PI/2.0 : atan(y, x); }
+float atan2(const in vec2 v) { return atan2(v.y, v.x); }`,
 };
 
 const shaderPrefix = 'precision mediump float;\n';
