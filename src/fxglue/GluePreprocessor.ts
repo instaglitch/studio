@@ -60,8 +60,6 @@ export class GluePreprocessor {
       currentOutputLine++;
     }
 
-    console.log(processedShader);
-
     return {
       lineMap,
       source: processedShader,
