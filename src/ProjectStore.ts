@@ -1,8 +1,8 @@
 import { makeAutoObservable } from 'mobx';
 import React, { useContext } from 'react';
 import { FilterSetting } from './types';
-import { Glue } from './fxglue/Glue';
-import { GlueProgramError } from './fxglue/GlueProgram';
+import { Glue } from 'fxglue';
+import { GlueProgramError } from 'fxglue/lib/GlueProgram';
 
 const defaultFragmentShader = `void main()
 {

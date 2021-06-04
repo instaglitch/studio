@@ -5302,6 +5302,11 @@ functional-red-black-tree@^1.0.1:
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
 
+fxglue@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/fxglue/-/fxglue-0.0.1.tgz#5805e147baa583b19364c9d738ba55cc79f29ebf"
+  integrity sha512-c+7Rn20lWwJXIyzEPeaJtYBh4iMWxLCVb/AlqLWKiuKFWHekCfT++Zdcc8vJQ2BUDQdfY7rxgN1AWCEdWiw1Aw==
+
 gensync@^1.0.0-beta.1:
   version "1.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.2.tgz#32a6ee76c3d7f52d46b2b1ae5d93fea8580a25e0"
