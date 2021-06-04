@@ -97,7 +97,7 @@ class ProjectStore {
       clearTimeout(timeout);
     }
 
-    setTimeout(() => this.requestPreviewRender(), 1000);
+    timeout = setTimeout(() => this.requestPreviewRender(), 1000);
   }
 
   requestPreviewRender() {
