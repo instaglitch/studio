@@ -45,6 +45,10 @@ CodeMirror.defineMode('glsl', function (config, parserConfig) {
         return 'comment';
       }
     }
+    if (ch === '@') {
+      stream.skipToEnd();
+      return 'comment';
+    }
     if (isOperatorChar.test(ch)) {
       stream.eatWhile(isOperatorChar);
       return 'operator';
@@ -93,12 +97,14 @@ CodeMirror.defineMode('glsl', function (config, parserConfig) {
     return 'comment';
   }
 
-  function Context(indented, column, type, align, prev) {
-    this.indented = indented;
-    this.column = column;
-    this.type = type;
-    this.align = align;
-    this.prev = prev;
+  class Context {
+    constructor(indented, column, type, align, prev) {
+      this.indented = indented;
+      this.column = column;
+      this.type = type;
+      this.align = align;
+      this.prev = prev;
+    }
   }
   function pushContext(state, col, type) {
     var indent = state.indented;
@@ -186,7 +192,7 @@ CodeMirror.defineMode('glsl', function (config, parserConfig) {
     electricChars: '{}',
     blockCommentStart: '/*',
     blockCommentEnd: '*/',
-    lineComment: '//',
+    lineComment: ['//', '@'],
     fold: 'brace',
   };
 });
