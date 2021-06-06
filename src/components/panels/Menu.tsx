@@ -11,6 +11,9 @@ export const Menu: React.FC = observer(() => {
     <ul className="panel menu">
       <Logo />
       <li>
+        <button onClick={() => projectStore.reset()}>New</button>
+      </li>
+      <li>
         <button onClick={() => projectStore.open()}>Open</button>
       </li>
       <li>

@@ -19,14 +19,14 @@ const defaultVertexShader = `void main() {
 let timeout: any = undefined;
 
 class ProjectStore {
+  name = 'Untitled';
+  description?: string;
   fragmentShader = defaultFragmentShader;
   vertexShader = defaultVertexShader;
   fragmentShaderErrors: Record<number, string[]> = {};
   vertexShaderErrors: Record<number, string[]> = {};
   tab = 'fragment';
   loading = false;
-  name = 'Untitled';
-  description?: string;
 
   image?: HTMLImageElement;
   previewCanvas = document.createElement('canvas');
@@ -121,8 +121,12 @@ class ProjectStore {
   }
 
   reset() {
+    this.name = 'Untitled';
+    this.description = undefined;
     this.fragmentShader = defaultFragmentShader;
     this.vertexShader = defaultVertexShader;
+    this.fragmentShaderErrors = {};
+    this.vertexShaderErrors = {};
     this.tab = 'fragment';
     this.settings = [];
     this.settingValues = {};
