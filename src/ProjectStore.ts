@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import React, { useContext } from 'react';
-import { FilterSetting } from './types';
+import { FilterSetting, FilterSettingType } from './types';
 import { Glue } from 'fxglue';
 
 const defaultFragmentShader = `void main()
@@ -31,6 +31,7 @@ class ProjectStore {
   previewCanvas = document.createElement('canvas');
   settings: FilterSettingWithId[] = [];
   settingValues: Record<string, any> = {};
+  settingsLineOffset = 0;
 
   constructor() {
     makeAutoObservable(this);
@@ -119,13 +120,59 @@ class ProjectStore {
     glue.setSize(this.image.naturalWidth, this.image.naturalHeight);
     glue.image(this.image);
 
+    let shaderPrefix = '';
+
+    for (const setting of this.settings) {
+      if (!setting.key) {
+        continue;
+      }
+
+      switch (setting.type) {
+        case FilterSettingType.BOOLEAN:
+          shaderPrefix += `uniform bool ${setting.key};\n`;
+          break;
+        case FilterSettingType.OFFSET:
+          shaderPrefix += `uniform vec2 ${setting.key};\n`;
+          break;
+        case FilterSettingType.FLOAT:
+          shaderPrefix += `uniform float ${setting.key};\n`;
+          break;
+        case FilterSettingType.INTEGER:
+        case FilterSettingType.SELECT:
+          shaderPrefix += `uniform int ${setting.key};\n`;
+          break;
+        case FilterSettingType.COLOR:
+          shaderPrefix += `uniform vec4 ${setting.key};\n`;
+          break;
+      }
+    }
+
+    this.settingsLineOffset = shaderPrefix.split('\n').length - 1;
+
     try {
       this.fragmentShaderErrors = {};
       this.vertexShaderErrors = {};
-      glue.registerProgram('filter', this.fragmentShader, this.vertexShader);
+      glue.registerProgram(
+        'filter',
+        shaderPrefix + this.fragmentShader,
+        shaderPrefix + this.vertexShader
+      );
     } catch (e) {
       this.fragmentShaderErrors = e.fragmentShaderErrors;
       this.vertexShaderErrors = e.vertexShaderErrors;
+    }
+
+    for (const setting of this.settings) {
+      if (!setting.key) {
+        continue;
+      }
+
+      glue
+        .program('filter')
+        ?.uniforms.set(
+          setting.key,
+          this.settingValues[setting.key] || setting.defaultValue
+        );
     }
 
     glue.program('filter')?.apply();

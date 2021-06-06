@@ -48,6 +48,7 @@ const Setting: React.FC<{ setting: FilterSettingWithId }> = observer(
           Type:{' '}
           <select
             onChange={e => {
+              delete projectStore.settingValues[setting.name];
               setting.type = e.target.value as FilterSettingType;
 
               setting.minValue = undefined;
@@ -84,6 +85,8 @@ const Setting: React.FC<{ setting: FilterSettingWithId }> = observer(
                   setting.selectValues = [];
                   break;
               }
+
+              projectStore.settingValues[setting.name] = setting.defaultValue;
             }}
             value={setting.type}
           >
@@ -102,7 +105,11 @@ const Setting: React.FC<{ setting: FilterSettingWithId }> = observer(
           <input
             type="text"
             value={setting.name}
-            onChange={e => (setting.name = e.target.value)}
+            onChange={e => {
+              delete projectStore.settingValues[setting.name];
+              projectStore.settingValues[e.target.value] = setting.defaultValue;
+              setting.name = e.target.value;
+            }}
           />
         </label>
         <label>
@@ -257,6 +264,15 @@ const Setting: React.FC<{ setting: FilterSettingWithId }> = observer(
             <div>
               {setting.selectValues?.map(value => (
                 <div className="select-value" key={value.id}>
+                  <button
+                    onClick={() =>
+                      (setting.selectValues = setting.selectValues?.filter(
+                        v => v.id !== value.id
+                      ))
+                    }
+                  >
+                    <BsTrash /> Delete
+                  </button>
                   <label>
                     Name:{' '}
                     <input
