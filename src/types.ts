@@ -25,6 +25,7 @@ export interface FilterSettingSelectValue {
 }
 
 export interface FilterSetting {
+  id: string;
   key: string;
   name: string;
   description?: string;
@@ -42,6 +43,8 @@ export interface Filter {
   name: string;
   description?: string;
   settings?: FilterSetting[];
+  fragmentShader: string;
+  vertexShader: string;
 }
 
 export interface FilterLayer extends Layer {

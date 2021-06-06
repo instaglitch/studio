@@ -1,7 +1,10 @@
 import { makeAutoObservable } from 'mobx';
 import React, { useContext } from 'react';
-import { FilterSetting, FilterSettingType } from './types';
 import { Glue } from 'fxglue';
+import { v4 as uuid } from 'uuid';
+import { download } from 'fitool';
+
+import { Filter, FilterSetting, FilterSettingType } from './types';
 
 const defaultFragmentShader = `void main()
 {
@@ -13,10 +16,6 @@ const defaultVertexShader = `void main() {
   gl_Position = vec4(position, 1.0);
 }`;
 
-export interface FilterSettingWithId extends FilterSetting {
-  id: string;
-}
-
 let timeout: any = undefined;
 
 class ProjectStore {
@@ -26,6 +25,8 @@ class ProjectStore {
   vertexShaderErrors: Record<number, string[]> = {};
   tab = 'fragment';
   loading = false;
+  name = 'Untitled';
+  description?: string;
 
   image?: HTMLImageElement;
   previewCanvas = document.createElement('canvas');
@@ -34,7 +35,7 @@ class ProjectStore {
       premultipliedAlpha: false,
     })!
   );
-  settings: FilterSettingWithId[] = [];
+  settings: FilterSetting[] = [];
   settingValues: Record<string, any> = {};
   settingsLineOffset = 0;
 
@@ -42,6 +43,61 @@ class ProjectStore {
     makeAutoObservable(this);
 
     this.loadImage('/preview.jpg');
+  }
+
+  buildJson(): Filter {
+    return {
+      id: uuid(),
+      name: this.name,
+      description: this.description,
+      settings: this.settings,
+      vertexShader: this.vertexShader,
+      fragmentShader: this.fragmentShader,
+    };
+  }
+
+  open() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.instaglitch-filter.json';
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files?.length) {
+        const file = fileInput.files[0];
+
+        this.loading = true;
+        const reader = new FileReader();
+
+        reader.addEventListener('load', () => {
+          this.loading = false;
+          const filter: Filter = JSON.parse(reader.result as string);
+          if (!filter.vertexShader || !filter.fragmentShader) {
+            // TODO: Display error.
+            return;
+          }
+
+          this.name = filter.name;
+          this.description = filter.description;
+          this.fragmentShader = filter.fragmentShader;
+          this.vertexShader = filter.vertexShader;
+          this.settings = filter.settings || [];
+          this.requestPreviewRender();
+        });
+
+        reader.addEventListener('error', () => {
+          this.loading = false;
+        });
+
+        reader.readAsText(file);
+      }
+    });
+    fileInput.click();
+  }
+
+  save() {
+    download(
+      JSON.stringify(this.buildJson()),
+      `${this.name}.instaglitch-filter.json`
+    );
   }
 
   loadImage(src: string) {

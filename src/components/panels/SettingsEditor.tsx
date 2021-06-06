@@ -7,10 +7,10 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 import { BsPlus, BsTrash } from 'react-icons/bs';
-
-import { useProjectStore, FilterSettingWithId } from '../../ProjectStore';
 import { v4 as uuid } from 'uuid';
-import { FilterSettingType } from '../../types';
+
+import { useProjectStore } from '../../ProjectStore';
+import { FilterSetting, FilterSettingType } from '../../types';
 import { ColorPicker } from '../common/ColorPicker';
 
 function reorder<T>(list: T[], startIndex: number, endIndex: number) {
@@ -21,7 +21,7 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number) {
   return result;
 }
 
-const SettingsEditorItem: React.FC<{ setting: FilterSettingWithId }> = observer(
+const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
   ({ setting }) => {
     const projectStore = useProjectStore();
 
