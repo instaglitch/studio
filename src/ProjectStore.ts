@@ -29,6 +29,11 @@ class ProjectStore {
 
   image?: HTMLImageElement;
   previewCanvas = document.createElement('canvas');
+  glue = new Glue(
+    this.previewCanvas.getContext('webgl', {
+      premultipliedAlpha: false,
+    })!
+  );
   settings: FilterSettingWithId[] = [];
   settingValues: Record<string, any> = {};
   settingsLineOffset = 0;
@@ -46,6 +51,7 @@ class ProjectStore {
 
     const onload = () => {
       this.image = image;
+      this.glue.registerImage('image', image);
 
       this.loading = false;
       this.requestPreviewRender();
@@ -104,7 +110,7 @@ class ProjectStore {
     requestAnimationFrame(() => this.renderCurrentProject());
   }
 
-  renderCurrentProject(maxSize = 800) {
+  renderCurrentProject() {
     if (!this.image) {
       return;
     }
@@ -112,13 +118,11 @@ class ProjectStore {
     this.previewCanvas.width = 800;
     this.previewCanvas.height = 800;
 
-    const gl = this.previewCanvas.getContext('webgl', {
-      premultipliedAlpha: false,
-    })!;
-
-    const glue = new Glue(gl);
+    const glue = this.glue;
     glue.setSize(this.image.naturalWidth, this.image.naturalHeight);
-    glue.image(this.image);
+    glue.image('image');
+
+    glue.deregisterProgram('filter');
 
     let shaderPrefix = '';
 
@@ -177,7 +181,6 @@ class ProjectStore {
 
     glue.program('filter')?.apply();
     glue.render();
-    glue.dispose();
   }
 }
 
