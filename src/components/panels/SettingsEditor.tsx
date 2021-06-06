@@ -41,7 +41,11 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
           <input
             type="text"
             value={setting.key}
-            onChange={e => (setting.key = e.target.value)}
+            onChange={e => {
+              delete projectStore.settingValues[setting.key];
+              projectStore.settingValues[e.target.value] = setting.defaultValue;
+              setting.key = e.target.value;
+            }}
           />
         </label>
         <label>
@@ -71,7 +75,7 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
                   setting.defaultValue = 0.5;
                   break;
                 case FilterSettingType.COLOR:
-                  setting.defaultValue = [0, 0, 0, 1.0];
+                  setting.defaultValue = '#000000FF';
                   break;
                 case FilterSettingType.BOOLEAN:
                   setting.defaultValue = false;
@@ -105,11 +109,7 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
           <input
             type="text"
             value={setting.name}
-            onChange={e => {
-              delete projectStore.settingValues[setting.name];
-              projectStore.settingValues[e.target.value] = setting.defaultValue;
-              setting.name = e.target.value;
-            }}
+            onChange={e => (setting.name = e.target.value)}
           />
         </label>
         <label>
@@ -156,19 +156,8 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
             )}
             {setting.type === FilterSettingType.COLOR && (
               <ColorPicker
-                value={`rgba(${setting.defaultValue[0] * 255}, ${
-                  setting.defaultValue[1] * 255
-                }, ${setting.defaultValue[2] * 255}, ${
-                  setting.defaultValue[3]
-                })`}
-                onChange={result =>
-                  (setting.defaultValue = [
-                    result.rgb.r / 255,
-                    result.rgb.g / 255,
-                    result.rgb.b / 255,
-                    result.rgb.a || 0,
-                  ])
-                }
+                value={setting.defaultValue}
+                onChange={result => (setting.defaultValue = result)}
               />
             )}
             {setting.type === FilterSettingType.SELECT &&
@@ -254,7 +243,7 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
             Toggle color:{' '}
             <ColorPicker
               value={setting.color}
-              onChange={result => (setting.color = result.hex)}
+              onChange={result => (setting.color = result)}
             />
           </label>
         )}

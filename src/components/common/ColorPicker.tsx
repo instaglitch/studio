@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import { ColorResult, SketchPicker } from 'react-color';
+import { SketchPicker } from 'react-color';
 import clsx from 'clsx';
 
 export interface ColorPickerProps {
   className?: string;
   value?: string;
-  onChange?: (result: ColorResult) => void;
+  onChange?: (result: string) => void;
 }
 
 export const ColorPicker: React.FC<ColorPickerProps> = ({
@@ -25,7 +25,10 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
       {show ? (
         <div className="colorpicker-popover">
           <div className="colorpicker-cover" onClick={close} />
-          <SketchPicker color={value} onChange={onChange} />
+          <SketchPicker
+            color={value}
+            onChange={result => onChange?.(result.hex)}
+          />
         </div>
       ) : null}
     </div>

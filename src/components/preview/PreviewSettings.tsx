@@ -1,9 +1,22 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import DatGui, { DatNumber, DatBoolean, DatFolder } from 'react-dat-gui';
+import DatGui, {
+  DatNumber,
+  DatBoolean,
+  DatFolder,
+  DatColor,
+  DatSelect,
+} from 'react-dat-gui';
 
 import { useProjectStore } from '../../ProjectStore';
 import { FilterSettingType } from '../../types';
+
+declare module 'react-dat-gui' {
+  interface DatSelectProps extends DatChangableFieldProps {
+    options: any[];
+    optionLabels: any[];
+  }
+}
 
 export const PreviewSettings: React.FC = observer(() => {
   const projectStore = useProjectStore();
@@ -12,6 +25,11 @@ export const PreviewSettings: React.FC = observer(() => {
     <DatGui
       data={projectStore.settingValues}
       onUpdate={data => {
+        for (const setting of projectStore.settings) {
+          if (setting.type === FilterSettingType.SELECT) {
+            data[setting.key] = parseInt(data[setting.key]);
+          }
+        }
         console.log(data);
         projectStore.settingValues = data;
         projectStore.requestPreviewRender();
@@ -48,14 +66,16 @@ export const PreviewSettings: React.FC = observer(() => {
               />
             );
           case FilterSettingType.COLOR:
-            return null; // TODO: handle
+            return (
+              <DatColor path={setting.key} label={name} key={setting.id} />
+            );
           case FilterSettingType.BOOLEAN:
             return (
               <DatBoolean path={setting.key} label={name} key={setting.id} />
             );
           case FilterSettingType.OFFSET:
             return (
-              <DatFolder key={setting.id} title={name} closed={false}>
+              <DatFolder title={name} closed={false} key={setting.id}>
                 <DatNumber
                   min={-1}
                   max={1}
@@ -73,7 +93,17 @@ export const PreviewSettings: React.FC = observer(() => {
               </DatFolder>
             );
           case FilterSettingType.SELECT:
-            return null; // TODO: handle
+            return (
+              <DatSelect
+                path={setting.key}
+                label={name}
+                key={setting.id}
+                options={setting.selectValues?.map(value => value.value) || []}
+                optionLabels={
+                  setting.selectValues?.map(value => value.name) || []
+                }
+              />
+            );
         }
 
         return null;
