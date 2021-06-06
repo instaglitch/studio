@@ -1,5 +1,6 @@
 @import 'codemirror/lib/codemirror.css';
 @import 'codemirror/theme/dracula.css';
+@import 'react-dat-gui/dist/index.css';
 
 body {
   margin: 0;
@@ -115,6 +116,7 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 
     canvas {
       max-width: 100%;
@@ -442,4 +444,9 @@ span.error-icon {
     bottom: 0px;
     left: 0px;
   }
+}
+
+.react-dat-gui {
+  position: absolute;
+  right: 0;
 }

@@ -21,7 +21,7 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number) {
   return result;
 }
 
-const Setting: React.FC<{ setting: FilterSettingWithId }> = observer(
+const SettingsEditorItem: React.FC<{ setting: FilterSettingWithId }> = observer(
   ({ setting }) => {
     const projectStore = useProjectStore();
 
@@ -198,7 +198,7 @@ const Setting: React.FC<{ setting: FilterSettingWithId }> = observer(
             <label>
               Minimum value:{' '}
               <input
-                type="text"
+                type="number"
                 value={setting.minValue}
                 onChange={e => (setting.minValue = parseInt(e.target.value))}
               />
@@ -206,7 +206,7 @@ const Setting: React.FC<{ setting: FilterSettingWithId }> = observer(
             <label>
               Maximum value:{' '}
               <input
-                type="text"
+                type="number"
                 value={setting.maxValue}
                 onChange={e => (setting.maxValue = parseInt(e.target.value))}
               />
@@ -214,7 +214,7 @@ const Setting: React.FC<{ setting: FilterSettingWithId }> = observer(
             <label>
               Step:{' '}
               <input
-                type="text"
+                type="number"
                 value={setting.step}
                 onChange={e => (setting.step = parseInt(e.target.value))}
               />
@@ -226,7 +226,7 @@ const Setting: React.FC<{ setting: FilterSettingWithId }> = observer(
             <label>
               Minimum value:{' '}
               <input
-                type="text"
+                type="number"
                 value={setting.minValue}
                 onChange={e => (setting.minValue = parseFloat(e.target.value))}
               />
@@ -234,7 +234,7 @@ const Setting: React.FC<{ setting: FilterSettingWithId }> = observer(
             <label>
               Maximum value:{' '}
               <input
-                type="text"
+                type="number"
                 value={setting.maxValue}
                 onChange={e => (setting.maxValue = parseFloat(e.target.value))}
               />
@@ -242,7 +242,7 @@ const Setting: React.FC<{ setting: FilterSettingWithId }> = observer(
             <label>
               Step:{' '}
               <input
-                type="text"
+                type="number"
                 value={setting.step}
                 onChange={e => (setting.step = parseFloat(e.target.value))}
               />
@@ -314,7 +314,7 @@ const Setting: React.FC<{ setting: FilterSettingWithId }> = observer(
   }
 );
 
-export const SettingsList: React.FC = observer(() => {
+export const SettingsEditorList: React.FC = observer(() => {
   const projectStore = useProjectStore();
 
   return (
@@ -327,7 +327,7 @@ export const SettingsList: React.FC = observer(() => {
               {...provided.draggableProps}
               {...provided.dragHandleProps}
             >
-              <Setting setting={setting} />
+              <SettingsEditorItem setting={setting} />
             </div>
           )}
         </Draggable>
@@ -336,7 +336,7 @@ export const SettingsList: React.FC = observer(() => {
   );
 });
 
-export const Settings: React.FC = observer(() => {
+export const SettingsEditor: React.FC = observer(() => {
   const projectStore = useProjectStore();
 
   const onDragEnd = (result: DropResult) => {
@@ -366,7 +366,7 @@ export const Settings: React.FC = observer(() => {
                 ref={provided.innerRef}
                 className="settings"
               >
-                <SettingsList />
+                <SettingsEditorList />
                 {provided.placeholder}
               </div>
             )}
