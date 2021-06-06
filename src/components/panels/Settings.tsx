@@ -11,6 +11,7 @@ import { BsPlus, BsTrash } from 'react-icons/bs';
 import { useProjectStore, FilterSettingWithId } from '../../ProjectStore';
 import { v4 as uuid } from 'uuid';
 import { FilterSettingType } from '../../types';
+import { ColorPicker } from '../common/ColorPicker';
 
 function reorder<T>(list: T[], startIndex: number, endIndex: number) {
   const result = Array.from(list);
@@ -45,13 +46,55 @@ const Setting: React.FC<{ setting: FilterSettingWithId }> = observer(
         </label>
         <label>
           Type:{' '}
-          <select>
-            <option>Integer</option>
-            <option>Float</option>
-            <option>Offset (vec2)</option>
-            <option>Checkbox (boolean)</option>
-            <option>Select</option>
-            <option>Color</option>
+          <select
+            onChange={e => {
+              setting.type = e.target.value as FilterSettingType;
+
+              setting.minValue = undefined;
+              setting.maxValue = undefined;
+              setting.step = undefined;
+              setting.color = undefined;
+              setting.selectValues = undefined;
+
+              switch (setting.type) {
+                case FilterSettingType.INTEGER:
+                  setting.minValue = 0;
+                  setting.maxValue = 10;
+                  setting.step = 1;
+                  setting.defaultValue = 1;
+                  break;
+                case FilterSettingType.FLOAT:
+                  setting.minValue = 0;
+                  setting.maxValue = 1;
+                  setting.step = 0.01;
+                  setting.defaultValue = 0.5;
+                  break;
+                case FilterSettingType.COLOR:
+                  setting.defaultValue = [0, 0, 0, 1.0];
+                  break;
+                case FilterSettingType.BOOLEAN:
+                  setting.defaultValue = false;
+                  break;
+                case FilterSettingType.OFFSET:
+                  setting.defaultValue = [0, 0];
+                  setting.color = '#FFFFFF';
+                  break;
+                case FilterSettingType.SELECT:
+                  setting.defaultValue = undefined;
+                  setting.selectValues = [];
+                  break;
+              }
+            }}
+            value={setting.type}
+          >
+            <option value={FilterSettingType.INTEGER}>Integer</option>
+            <option value={FilterSettingType.FLOAT}>Float</option>
+            <option value={FilterSettingType.OFFSET}>Offset (vec2)</option>
+            <option value={FilterSettingType.BOOLEAN}>
+              Checkbox (boolean)
+            </option>
+            <option value={FilterSettingType.SELECT}>Select</option>
+            <option value={FilterSettingType.COLOR}>Color</option>
           </select>
         </label>
         <label>
@@ -70,20 +113,215 @@ const Setting: React.FC<{ setting: FilterSettingWithId }> = observer(
             onChange={e => (setting.description = e.target.value)}
           />
         </label>
-        {/* <label>Default value: <input type="text" value={setting.defaultValue} onChange={e => setting.defaultValue = e.target.value} /></label>
-      <label>Minimum value: <input type="text" value={setting.defaultValue} onChange={e => setting.defaultValue = e.target.value} /></label>
-      <label>Maximum value: <input type="text" value={setting.defaultValue} onChange={e => setting.defaultValue = e.target.value} /></label>
-      <label>Step: <input type="text" value={setting.defaultValue} onChange={e => setting.defaultValue = e.target.value} /></label>
-      <label>Toggle color: <input type="text" value={setting.defaultValue} onChange={e => setting.defaultValue = e.target.value} /></label> */}
+        {setting.type !== FilterSettingType.OFFSET && (
+          <label>
+            Default value:
+            {setting.type === FilterSettingType.BOOLEAN && (
+              <input
+                type="checkbox"
+                checked={setting.defaultValue}
+                onChange={e => (setting.defaultValue = e.target.checked)}
+              />
+            )}
+            {setting.type === FilterSettingType.FLOAT && (
+              <input
+                type="number"
+                step={setting.step || 0.01}
+                value={setting.defaultValue}
+                max={setting.maxValue}
+                min={setting.minValue}
+                onChange={e =>
+                  (setting.defaultValue = parseFloat(e.target.value))
+                }
+              />
+            )}
+            {setting.type === FilterSettingType.INTEGER && (
+              <input
+                type="number"
+                step={setting.step || 1}
+                value={setting.defaultValue}
+                max={setting.maxValue}
+                min={setting.minValue}
+                onChange={e =>
+                  (setting.defaultValue = parseInt(e.target.value))
+                }
+              />
+            )}
+            {setting.type === FilterSettingType.COLOR && (
+              <ColorPicker
+                value={`rgba(${setting.defaultValue[0] * 255}, ${
+                  setting.defaultValue[1] * 255
+                }, ${setting.defaultValue[2] * 255}, ${
+                  setting.defaultValue[3]
+                })`}
+                onChange={result =>
+                  (setting.defaultValue = [
+                    result.rgb.r / 255,
+                    result.rgb.g / 255,
+                    result.rgb.b / 255,
+                    result.rgb.a || 0,
+                  ])
+                }
+              />
+            )}
+            {setting.type === FilterSettingType.SELECT &&
+              setting.selectValues?.length === 0 && (
+                <span>Add some options first.</span>
+              )}
+            {setting.type === FilterSettingType.SELECT &&
+              !!setting.selectValues &&
+              setting.selectValues.length > 0 && (
+                <select
+                  onChange={e => {
+                    setting.defaultValue = parseInt(e.target.value);
+                  }}
+                  value={setting.defaultValue}
+                >
+                  {setting.selectValues.map(value => (
+                    <option key={value.id} value={value.value}>
+                      {value.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+          </label>
+        )}
+        {setting.type === FilterSettingType.INTEGER && (
+          <>
+            <label>
+              Minimum value:{' '}
+              <input
+                type="text"
+                value={setting.minValue}
+                onChange={e => (setting.minValue = parseInt(e.target.value))}
+              />
+            </label>
+            <label>
+              Maximum value:{' '}
+              <input
+                type="text"
+                value={setting.maxValue}
+                onChange={e => (setting.maxValue = parseInt(e.target.value))}
+              />
+            </label>
+            <label>
+              Step:{' '}
+              <input
+                type="text"
+                value={setting.step}
+                onChange={e => (setting.step = parseInt(e.target.value))}
+              />
+            </label>
+          </>
+        )}
+        {setting.type === FilterSettingType.FLOAT && (
+          <>
+            <label>
+              Minimum value:{' '}
+              <input
+                type="text"
+                value={setting.minValue}
+                onChange={e => (setting.minValue = parseFloat(e.target.value))}
+              />
+            </label>
+            <label>
+              Maximum value:{' '}
+              <input
+                type="text"
+                value={setting.maxValue}
+                onChange={e => (setting.maxValue = parseFloat(e.target.value))}
+              />
+            </label>
+            <label>
+              Step:{' '}
+              <input
+                type="text"
+                value={setting.step}
+                onChange={e => (setting.step = parseFloat(e.target.value))}
+              />
+            </label>
+          </>
+        )}
+        {setting.type === FilterSettingType.OFFSET && (
+          <label>
+            Toggle color:{' '}
+            <ColorPicker
+              value={setting.color}
+              onChange={result => (setting.color = result.hex)}
+            />
+          </label>
+        )}
+        {setting.type === FilterSettingType.SELECT && (
+          <label>
+            Options:
+            <div>
+              {setting.selectValues?.map(value => (
+                <div className="select-value" key={value.id}>
+                  <label>
+                    Name:{' '}
+                    <input
+                      type="text"
+                      value={value.name}
+                      onChange={e => (value.name = e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Value:{' '}
+                    <input
+                      type="number"
+                      step={1}
+                      value={value.value}
+                      onChange={e => (value.value = parseInt(e.target.value))}
+                    />
+                  </label>
+                </div>
+              ))}
+              <button
+                onClick={() => {
+                  setting.selectValues = [
+                    ...setting.selectValues!,
+                    {
+                      id: uuid(),
+                      name: '',
+                      value: 0,
+                    },
+                  ];
+                }}
+              >
+                <BsPlus /> Add a new option
+              </button>
+            </div>
+          </label>
+        )}
       </div>
     );
   }
 );
 
-export const Settings: React.FC = observer(() => {
+export const SettingsList: React.FC = observer(() => {
   const projectStore = useProjectStore();
 
-  const settings = projectStore.settings;
+  return (
+    <>
+      {projectStore.settings.map((setting, index) => (
+        <Draggable key={setting.id} draggableId={setting.id} index={index}>
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+            >
+              <Setting setting={setting} />
+            </div>
+          )}
+        </Draggable>
+      ))}
+    </>
+  );
+});
+
+export const Settings: React.FC = observer(() => {
+  const projectStore = useProjectStore();
 
   const onDragEnd = (result: DropResult) => {
     // dropped outside the list
@@ -112,23 +350,7 @@ export const Settings: React.FC = observer(() => {
                 ref={provided.innerRef}
                 className="settings"
               >
-                {projectStore.settings.map((setting, index) => (
-                  <Draggable
-                    key={setting.id}
-                    draggableId={setting.id}
-                    index={index}
-                  >
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <Setting setting={setting} />
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
+                <SettingsList />
                 {provided.placeholder}
               </div>
             )}
@@ -144,6 +366,9 @@ export const Settings: React.FC = observer(() => {
                 key: '',
                 name: '',
                 type: FilterSettingType.FLOAT,
+                step: 0.01,
+                minValue: 1,
+                maxValue: 1,
               },
             ];
           }}

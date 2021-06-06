@@ -10,11 +10,18 @@ export interface Layer {
 }
 
 export enum FilterSettingType {
-  OFFSET,
-  COLOR,
-  INTEGER,
-  FLOAT,
-  BOOLEAN,
+  OFFSET = 'offset',
+  COLOR = 'color',
+  INTEGER = 'integer',
+  FLOAT = 'float',
+  BOOLEAN = 'boolean',
+  SELECT = 'select',
+}
+
+export interface FilterSettingSelectValue {
+  id: string;
+  name: string;
+  value: number;
 }
 
 export interface FilterSetting {
@@ -27,6 +34,7 @@ export interface FilterSetting {
   maxValue?: number;
   color?: string;
   step?: number;
+  selectValues?: FilterSettingSelectValue[];
 }
 
 export interface Filter {
