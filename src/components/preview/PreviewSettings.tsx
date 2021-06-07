@@ -1,5 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
+import { toJS } from 'mobx';
 import DatGui, {
   DatNumber,
   DatBoolean,
@@ -23,14 +24,14 @@ export const PreviewSettings: React.FC = observer(() => {
 
   return (
     <DatGui
-      data={projectStore.settingValues}
+      data={toJS(projectStore.settingValues)}
       onUpdate={data => {
         for (const setting of projectStore.settings) {
           if (setting.type === FilterSettingType.SELECT) {
             data[setting.key] = parseInt(data[setting.key]);
           }
         }
-        console.log(data);
+
         projectStore.settingValues = data;
         projectStore.requestPreviewRender();
       }}
