@@ -367,12 +367,12 @@ export const SettingsEditor: React.FC = observer(() => {
               ...projectStore.settings,
               {
                 id: uuid(),
-                defaultValue: 0,
+                defaultValue: 0.5,
                 key: '',
                 name: '',
                 type: FilterSettingType.FLOAT,
                 step: 0.01,
-                minValue: 1,
+                minValue: 0,
                 maxValue: 1,
               },
             ];
