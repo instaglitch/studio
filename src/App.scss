@@ -333,9 +333,12 @@ a {
     max-width: 99%;
   }
 }
+
 .editor {
   position: relative;
+  background: #282a36;
 }
+
 .react-codemirror2 {
   position: absolute;
   top: 0;
@@ -449,4 +452,17 @@ span.error-icon {
 .react-dat-gui {
   position: absolute;
   right: 0;
+}
+
+.intro {
+  padding: 20px;
+  padding-top: 0;
+
+  p {
+    width: 500px;
+  }
+}
+
+.uniforms dt {
+  font-weight: bold;
 }

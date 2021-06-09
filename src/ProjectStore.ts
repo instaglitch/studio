@@ -6,18 +6,30 @@ import { download } from 'fitool';
 
 import { Filter, FilterSetting, FilterSettingType } from './types';
 import { GlueUniformValue } from 'fxglue/lib/GlueUniforms';
-
-const defaultFragmentShader = `void main()
-{
-  vec2 p = gl_FragCoord.xy / iResolution.xy;
-  gl_FragColor = texture2D(iTexture, p);
-}`;
-
-const defaultVertexShader = `void main() {
-  gl_Position = vec4(position, 1.0);
-}`;
+import {
+  defaultFragmentShader,
+  defaultVertexShader,
+} from 'fxglue/lib/GlueShaderSources';
 
 let timeout: any = undefined;
+
+export function uniformType(type: FilterSettingType) {
+  switch (type) {
+    case FilterSettingType.BOOLEAN:
+      return 'bool';
+    case FilterSettingType.OFFSET:
+      return 'vec2';
+    case FilterSettingType.FLOAT:
+      return 'float';
+    case FilterSettingType.INTEGER:
+    case FilterSettingType.SELECT:
+      return 'int';
+    case FilterSettingType.COLOR:
+      return 'vec4';
+  }
+
+  return 'unknown';
+}
 
 class ProjectStore {
   name = 'Untitled';
@@ -26,7 +38,7 @@ class ProjectStore {
   vertexShader = defaultVertexShader;
   fragmentShaderErrors: Record<number, string[]> = {};
   vertexShaderErrors: Record<number, string[]> = {};
-  tab = 'fragment';
+  tab = 'introduction';
   loading = false;
 
   image?: HTMLImageElement;
@@ -190,24 +202,7 @@ class ProjectStore {
         continue;
       }
 
-      switch (setting.type) {
-        case FilterSettingType.BOOLEAN:
-          shaderPrefix += `uniform bool ${setting.key};\n`;
-          break;
-        case FilterSettingType.OFFSET:
-          shaderPrefix += `uniform vec2 ${setting.key};\n`;
-          break;
-        case FilterSettingType.FLOAT:
-          shaderPrefix += `uniform float ${setting.key};\n`;
-          break;
-        case FilterSettingType.INTEGER:
-        case FilterSettingType.SELECT:
-          shaderPrefix += `uniform int ${setting.key};\n`;
-          break;
-        case FilterSettingType.COLOR:
-          shaderPrefix += `uniform vec4 ${setting.key};\n`;
-          break;
-      }
+      shaderPrefix += `uniform ${uniformType(setting.type)} ${setting.key};\n`;
     }
 
     this.settingsLineOffset = shaderPrefix.split('\n').length - 1;
@@ -219,7 +214,7 @@ class ProjectStore {
       }
 
       uniforms[setting.key] =
-        this.settingValues[setting.key] || setting.defaultValue;
+        this.settingValues[setting.key] ?? setting.defaultValue;
     }
 
     try {

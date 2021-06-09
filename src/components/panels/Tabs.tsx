@@ -25,6 +25,7 @@ const Tab: React.FC<{ id: string; name: string }> = observer(({ id, name }) => {
 export const Tabs: React.FC = () => {
   return (
     <div className="panel tabs">
+      <Tab id="introduction" name="Introduction" />
       <Tab id="fragment" name="Fragment shader" />
       <Tab id="vertex" name="Vertex shader" />
       <Tab id="settings" name="Settings" />
