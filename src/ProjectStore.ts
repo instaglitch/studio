@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { download } from 'fitool';
 
 import { Filter, FilterSetting, FilterSettingType } from './types';
+import { GlueUniformValue } from 'fxglue/lib/GlueUniforms';
 
 const defaultFragmentShader = `void main()
 {
@@ -107,7 +108,7 @@ class ProjectStore {
 
     const onload = () => {
       this.image = image;
-      this.glue.registerImage('image', image);
+      this.glue.registerTexture('image', image);
 
       this.loading = false;
       this.requestPreviewRender();
@@ -180,9 +181,7 @@ class ProjectStore {
 
     const glue = this.glue;
     glue.setSize(this.image.naturalWidth, this.image.naturalHeight);
-    glue.image('image');
-
-    glue.deregisterProgram('filter');
+    glue.texture('image')?.draw();
 
     let shaderPrefix = '';
 
@@ -213,33 +212,28 @@ class ProjectStore {
 
     this.settingsLineOffset = shaderPrefix.split('\n').length - 1;
 
-    try {
-      this.fragmentShaderErrors = {};
-      this.vertexShaderErrors = {};
-      glue.registerProgram(
-        'filter',
-        shaderPrefix + this.fragmentShader,
-        shaderPrefix + this.vertexShader
-      );
-    } catch (e) {
-      this.fragmentShaderErrors = e.fragmentShaderErrors;
-      this.vertexShaderErrors = e.vertexShaderErrors;
-    }
-
+    const uniforms: Record<string, GlueUniformValue> = {};
     for (const setting of this.settings) {
       if (!setting.key) {
         continue;
       }
 
-      glue
-        .program('filter')
-        ?.uniforms.set(
-          setting.key,
-          this.settingValues[setting.key] || setting.defaultValue
-        );
+      uniforms[setting.key] =
+        this.settingValues[setting.key] || setting.defaultValue;
     }
 
-    glue.program('filter')?.apply();
+    try {
+      this.fragmentShaderErrors = {};
+      this.vertexShaderErrors = {};
+      glue.apply(
+        shaderPrefix + this.fragmentShader,
+        shaderPrefix + this.vertexShader,
+        uniforms
+      );
+    } catch (e) {
+      this.fragmentShaderErrors = e.fragmentShaderErrors;
+      this.vertexShaderErrors = e.vertexShaderErrors;
+    }
     glue.render();
   }
 }
