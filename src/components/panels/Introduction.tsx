@@ -43,7 +43,7 @@ export const Introduction: React.FC = observer(() => {
           1.0.
         </dd>
         <dt>
-          <em>vec3</em> iResolution
+          <em>vec2</em> iResolution
         </dt>
         <dd>
           Resolution of the screen, used to normalize <em>gl_FragCoord</em>.

@@ -42,9 +42,14 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
             type="text"
             value={setting.key}
             onChange={e => {
+              let value = e.target.value;
+              value = value.replace(/^\d+/, '');
+              value = value.replace(/[^a-zA-Z0-9_]/, '');
               delete projectStore.settingValues[setting.key];
-              projectStore.settingValues[e.target.value] = setting.defaultValue;
-              setting.key = e.target.value;
+              if (value) {
+                projectStore.settingValues[value] = setting.defaultValue;
+              }
+              setting.key = value;
             }}
           />
         </label>
