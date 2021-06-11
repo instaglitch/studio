@@ -11,6 +11,7 @@ import { Preview } from './components/preview/Preview';
 
 import { Loading } from './components/overlays/Loading';
 import { Editor } from './components/panels/Editor';
+import { Drop } from './components/overlays/Drop';
 
 function isWebGLAvailable() {
   try {
@@ -49,6 +50,7 @@ export const App: React.FC = () => {
   return (
     <>
       <Loading />
+      <Drop />
       <div className="ui v-stack">
         <Menu />
         <div className="workspace">

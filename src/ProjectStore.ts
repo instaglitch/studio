@@ -78,40 +78,10 @@ class ProjectStore {
       if (this.fileInput.files?.length) {
         const file = this.fileInput.files[0];
 
-        this.loading = true;
-        const reader = new FileReader();
-
-        reader.addEventListener('load', () => {
-          this.loading = false;
-
-          if (this.fileInputMode === 'project') {
-            const filter: Filter = JSON.parse(reader.result as string);
-            if (!filter.vertexShader || !filter.fragmentShader) {
-              // TODO: Display error.
-              return;
-            }
-
-            this.name = filter.name;
-            this.description = filter.description;
-            this.fragmentShader = filter.fragmentShader;
-            this.vertexShader = filter.vertexShader;
-            this.settings = filter.settings || [];
-            this.tab = 'fragment';
-            this.requestPreviewRender();
-          } else {
-            this.loading = true;
-            this.loadImage(reader.result as string);
-          }
-        });
-
-        reader.addEventListener('error', () => {
-          this.loading = false;
-        });
-
         if (this.fileInputMode === 'project') {
-          reader.readAsText(file);
+          this.loadProjectFromFile(file);
         } else {
-          reader.readAsDataURL(file);
+          this.loadImageFromFile(file);
         }
 
         this.fileInput.value = '';
@@ -143,6 +113,51 @@ class ProjectStore {
       JSON.stringify(this.buildJson()),
       `${this.name}.instaglitch-filter.json`
     );
+  }
+
+  loadImageFromFile(file: File) {
+    this.loading = true;
+    const reader = new FileReader();
+
+    reader.addEventListener('load', () => {
+      this.loading = false;
+      this.loadImage(reader.result as string);
+    });
+
+    reader.addEventListener('error', () => {
+      this.loading = false;
+    });
+
+    reader.readAsDataURL(file);
+  }
+
+  loadProjectFromFile(file: File) {
+    this.loading = true;
+    const reader = new FileReader();
+
+    reader.addEventListener('load', () => {
+      this.loading = false;
+
+      const filter: Filter = JSON.parse(reader.result as string);
+      if (!filter.vertexShader || !filter.fragmentShader) {
+        // TODO: Display error.
+        return;
+      }
+
+      this.name = filter.name;
+      this.description = filter.description;
+      this.fragmentShader = filter.fragmentShader;
+      this.vertexShader = filter.vertexShader;
+      this.settings = filter.settings || [];
+      this.tab = 'fragment';
+      this.requestPreviewRender();
+    });
+
+    reader.addEventListener('error', () => {
+      this.loading = false;
+    });
+
+    reader.readAsText(file);
   }
 
   loadImage(src: string) {
