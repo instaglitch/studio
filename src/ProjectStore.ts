@@ -40,6 +40,8 @@ class ProjectStore {
   vertexShaderErrors: Record<number, string[]> = {};
   tab = 'introduction';
   loading = false;
+  fileInput = document.createElement('input');
+  fileInputMode: 'project' | 'image' = 'project';
 
   image?: HTMLImageElement;
   previewCanvas = document.createElement('canvas');
@@ -54,6 +56,51 @@ class ProjectStore {
 
   constructor() {
     makeAutoObservable(this);
+
+    this.fileInput.type = 'file';
+    this.fileInput.accept = 'image/*';
+    this.fileInput.addEventListener('change', () => {
+      if (this.fileInput.files?.length) {
+        const file = this.fileInput.files[0];
+
+        this.loading = true;
+        const reader = new FileReader();
+
+        reader.addEventListener('load', () => {
+          this.loading = false;
+
+          if (this.fileInputMode === 'project') {
+            const filter: Filter = JSON.parse(reader.result as string);
+            if (!filter.vertexShader || !filter.fragmentShader) {
+              // TODO: Display error.
+              return;
+            }
+
+            this.name = filter.name;
+            this.description = filter.description;
+            this.fragmentShader = filter.fragmentShader;
+            this.vertexShader = filter.vertexShader;
+            this.settings = filter.settings || [];
+            this.tab = 'fragment';
+            this.requestPreviewRender();
+          }
+        });
+
+        reader.addEventListener('error', () => {
+          this.loading = false;
+        });
+
+        reader.readAsText(file);
+
+        this.fileInput.value = '';
+      }
+    });
+
+    this.fileInput.style.position = 'absolute';
+    this.fileInput.style.opacity = '0.001';
+    this.fileInput.style.pointerEvents = 'none';
+    this.fileInput.style.zIndex = '-1';
+    document.body.appendChild(this.fileInput);
 
     this.loadImage('/preview.jpg');
   }
@@ -70,40 +117,9 @@ class ProjectStore {
   }
 
   open() {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = '.instaglitch-filter.json';
-    fileInput.addEventListener('change', () => {
-      if (fileInput.files?.length) {
-        const file = fileInput.files[0];
-
-        this.loading = true;
-        const reader = new FileReader();
-
-        reader.addEventListener('load', () => {
-          this.loading = false;
-          const filter: Filter = JSON.parse(reader.result as string);
-          if (!filter.vertexShader || !filter.fragmentShader) {
-            // TODO: Display error.
-            return;
-          }
-
-          this.name = filter.name;
-          this.description = filter.description;
-          this.fragmentShader = filter.fragmentShader;
-          this.vertexShader = filter.vertexShader;
-          this.settings = filter.settings || [];
-          this.requestPreviewRender();
-        });
-
-        reader.addEventListener('error', () => {
-          this.loading = false;
-        });
-
-        reader.readAsText(file);
-      }
-    });
-    fileInput.click();
+    this.fileInput.accept = '.instaglitch-filter.json';
+    this.fileInputMode = 'project';
+    this.fileInput.click();
   }
 
   save() {
@@ -146,29 +162,8 @@ class ProjectStore {
   }
 
   openFilePicker() {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.addEventListener('change', () => {
-      if (fileInput.files?.length) {
-        const file = fileInput.files[0];
-
-        this.loading = true;
-        const reader = new FileReader();
-
-        reader.addEventListener('load', () => {
-          this.loading = false;
-          //this.addProjectFromURL(reader.result as string, file.name);
-        });
-
-        reader.addEventListener('error', () => {
-          this.loading = false;
-        });
-
-        reader.readAsDataURL(file);
-      }
-    });
-    fileInput.click();
+    this.fileInputMode = 'project';
+    this.fileInput.click();
   }
 
   requestDebouncedPreviewRender() {
