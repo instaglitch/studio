@@ -14,13 +14,20 @@ export const Menu: React.FC = observer(() => {
         <button onClick={() => projectStore.reset()}>New</button>
       </li>
       <li>
-        <button onClick={() => projectStore.open()}>Open</button>
+        <button onClick={() => projectStore.openFilePicker('project')}>
+          Open
+        </button>
       </li>
       <li>
         <button onClick={() => projectStore.save()}>Save</button>
       </li>
       <li>
         <button onClick={() => projectStore.renderCurrentProject()}>Run</button>
+      </li>
+      <li>
+        <button onClick={() => projectStore.openFilePicker('image')}>
+          Replace preview image
+        </button>
       </li>
     </ul>
   );

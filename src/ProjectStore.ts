@@ -31,6 +31,21 @@ export function uniformType(type: FilterSettingType) {
   return 'unknown';
 }
 
+type FilePickerMode = 'image' | 'project';
+
+function calculatePreviewSize(width: number, height: number, maxSize: number) {
+  if (maxSize) {
+    let scale = 1;
+
+    scale = Math.min(Math.min(maxSize / width, maxSize / height), 1);
+
+    width *= scale;
+    height *= scale;
+  }
+
+  return [width, height] as const;
+}
+
 class ProjectStore {
   name = 'Untitled';
   description?: string;
@@ -41,7 +56,7 @@ class ProjectStore {
   tab = 'introduction';
   loading = false;
   fileInput = document.createElement('input');
-  fileInputMode: 'project' | 'image' = 'project';
+  fileInputMode: FilePickerMode = 'project';
 
   image?: HTMLImageElement;
   previewCanvas = document.createElement('canvas');
@@ -83,6 +98,9 @@ class ProjectStore {
             this.settings = filter.settings || [];
             this.tab = 'fragment';
             this.requestPreviewRender();
+          } else {
+            this.loading = true;
+            this.loadImage(reader.result as string);
           }
         });
 
@@ -90,7 +108,11 @@ class ProjectStore {
           this.loading = false;
         });
 
-        reader.readAsText(file);
+        if (this.fileInputMode === 'project') {
+          reader.readAsText(file);
+        } else {
+          reader.readAsDataURL(file);
+        }
 
         this.fileInput.value = '';
       }
@@ -116,12 +138,6 @@ class ProjectStore {
     };
   }
 
-  open() {
-    this.fileInput.accept = '.instaglitch-filter.json';
-    this.fileInputMode = 'project';
-    this.fileInput.click();
-  }
-
   save() {
     download(
       JSON.stringify(this.buildJson()),
@@ -136,6 +152,16 @@ class ProjectStore {
 
     const onload = () => {
       this.image = image;
+
+      const [width, height] = calculatePreviewSize(
+        image.naturalWidth,
+        image.naturalHeight,
+        800
+      );
+      this.previewCanvas.width = width;
+      this.previewCanvas.height = height;
+
+      this.glue.deregisterTexture('image');
       this.glue.registerTexture('image', image);
 
       this.loading = false;
@@ -161,8 +187,13 @@ class ProjectStore {
     this.settingValues = {};
   }
 
-  openFilePicker() {
-    this.fileInputMode = 'project';
+  openFilePicker(mode: FilePickerMode) {
+    if (mode === 'project') {
+      this.fileInput.accept = '.instaglitch-filter.json';
+    } else {
+      this.fileInput.accept = 'image/*';
+    }
+    this.fileInputMode = mode;
     this.fileInput.click();
   }
 
@@ -183,11 +214,8 @@ class ProjectStore {
       return;
     }
 
-    this.previewCanvas.width = 800;
-    this.previewCanvas.height = 800;
-
     const glue = this.glue;
-    glue.setSize(this.image.naturalWidth, this.image.naturalHeight);
+    glue.setSize(this.previewCanvas.width, this.previewCanvas.height);
     glue.texture('image')?.draw();
 
     let shaderPrefix = '';
