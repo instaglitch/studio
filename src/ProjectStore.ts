@@ -149,6 +149,10 @@ class ProjectStore {
       this.fragmentShader = filter.fragmentShader || defaultFragmentShader;
       this.vertexShader = filter.vertexShader || defaultVertexShader;
       this.settings = filter.settings || [];
+      this.settingValues = {};
+      for (const setting of this.settings) {
+        this.settingValues[setting.key] = setting.defaultValue;
+      }
       this.tab = 'fragment';
       this.requestPreviewRender();
     });
