@@ -16,7 +16,7 @@
     "@types/uuid": "^8.3.0",
     "clsx": "^1.1.1",
     "codemirror": "^5.61.1",
-    "fitool": "^1.0.1",
+    "fitool": "^1.0.2",
     "fxglue": "^0.0.6",
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",

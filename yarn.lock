@@ -5146,10 +5146,10 @@ find-up@^3.0.0:
   dependencies:
     locate-path "^3.0.0"
 
-fitool@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/fitool/-/fitool-1.0.1.tgz#a836c98411a0d3ad43df5272b0dc8545044f26bc"
-  integrity sha512-oPPKQsGZtW0QvgnTzR+9Pnaq2vN6Lvl19B8KZNhP7xX5ikAJ1Qjq29WZQZTB1iWylKXIC9kTGDpShoS4soRtwQ==
+fitool@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/fitool/-/fitool-1.0.2.tgz#9fae6e04f24f995e5d67b798153579c97ede96c2"
+  integrity sha512-6me7kfh+k/25Iw77QHdsvqp0FRZVLtoyAyRUW8RTCjuQFgwPeJ8YDDMipr7T+fbTV46i5CVSIR2V7tDfUdRhlQ==
   dependencies:
     base64-js "^1.3.1"
 

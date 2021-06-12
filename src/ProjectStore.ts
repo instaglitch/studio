@@ -139,15 +139,15 @@ class ProjectStore {
       this.loading = false;
 
       const filter: Filter = JSON.parse(reader.result as string);
-      if (!filter.vertexShader || !filter.fragmentShader) {
+      if (!filter.vertexShader && !filter.fragmentShader) {
         // TODO: Display error.
         return;
       }
 
       this.name = filter.name;
       this.description = filter.description;
-      this.fragmentShader = filter.fragmentShader;
-      this.vertexShader = filter.vertexShader;
+      this.fragmentShader = filter.fragmentShader || defaultFragmentShader;
+      this.vertexShader = filter.vertexShader || defaultVertexShader;
       this.settings = filter.settings || [];
       this.tab = 'fragment';
       this.requestPreviewRender();
