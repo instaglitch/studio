@@ -1,6 +1,6 @@
 @import 'codemirror/lib/codemirror.css';
 @import 'codemirror/theme/dracula.css';
-@import 'react-dat-gui/dist/index.css';
+@import 'react-var-ui/dist/index.css';
 
 body {
   margin: 0;
@@ -328,10 +328,6 @@ a {
   display: grid;
   grid-template-columns: 1fr 1fr;
   flex: 1;
-
-  & > div {
-    max-width: 99%;
-  }
 }
 
 .editor {
@@ -449,9 +445,24 @@ span.error-icon {
   }
 }
 
-.react-dat-gui {
+.react-var-ui {
   position: absolute;
+  top: 0;
   right: 0;
+  width: 400px;
+  margin: 0;
+  --react-var-ui-label-border-color: transparent;
+  --react-var-ui-label-background-hover-color: #292930;
+
+  &-xy-space {
+    height: 150px;
+  }
+
+  &-slider {
+    span {
+      text-align: right;
+    }
+  }
 }
 
 .intro {
