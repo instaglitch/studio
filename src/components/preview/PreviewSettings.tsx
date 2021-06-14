@@ -47,6 +47,7 @@ export const PreviewSettings: React.FC = observer(() => {
                 path={setting.key}
                 label={name}
                 key={setting.id}
+                defaultValue={setting.defaultValue}
                 integer
               />
             );
@@ -58,19 +59,37 @@ export const PreviewSettings: React.FC = observer(() => {
                 step={setting.step ?? 0.01}
                 path={setting.key}
                 label={name}
+                defaultValue={setting.defaultValue}
                 key={setting.id}
               />
             );
           case FilterSettingType.COLOR:
             return (
-              <VarColor path={setting.key} label={name} key={setting.id} />
+              <VarColor
+                path={setting.key}
+                label={name}
+                key={setting.id}
+                defaultValue={setting.defaultValue}
+              />
             );
           case FilterSettingType.BOOLEAN:
             return (
-              <VarToggle path={setting.key} label={name} key={setting.id} />
+              <VarToggle
+                path={setting.key}
+                label={name}
+                key={setting.id}
+                defaultValue={setting.defaultValue}
+              />
             );
           case FilterSettingType.OFFSET:
-            return <VarXY label={name} path={setting.key} key={setting.id} />;
+            return (
+              <VarXY
+                label={name}
+                path={setting.key}
+                key={setting.id}
+                defaultValue={setting.defaultValue}
+              />
+            );
           case FilterSettingType.SELECT:
             return (
               <VarSelect
@@ -84,6 +103,7 @@ export const PreviewSettings: React.FC = observer(() => {
                     value: value.value,
                   })) || []
                 }
+                defaultValue={setting.defaultValue}
               />
             );
         }
