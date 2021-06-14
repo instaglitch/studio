@@ -36,7 +36,7 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
         >
           <BsTrash /> Delete
         </button>
-        <label>
+        <div className="setting-option">
           Uniform name:{' '}
           <input
             type="text"
@@ -52,8 +52,8 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
               setting.key = value;
             }}
           />
-        </label>
-        <label>
+        </div>
+        <div className="setting-option">
           Type:{' '}
           <select
             onChange={e => {
@@ -108,25 +108,25 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
             <option value={FilterSettingType.SELECT}>Select</option>
             <option value={FilterSettingType.COLOR}>Color</option>
           </select>
-        </label>
-        <label>
+        </div>
+        <div className="setting-option">
           Name:{' '}
           <input
             type="text"
             value={setting.name}
             onChange={e => (setting.name = e.target.value)}
           />
-        </label>
-        <label>
+        </div>
+        <div className="setting-option">
           Description:{' '}
           <input
             type="text"
             value={setting.description}
             onChange={e => (setting.description = e.target.value)}
           />
-        </label>
+        </div>
         {setting.type !== FilterSettingType.OFFSET && (
-          <label>
+          <div className="setting-option">
             Default value:
             {setting.type === FilterSettingType.BOOLEAN && (
               <input
@@ -185,75 +185,75 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
                   ))}
                 </select>
               )}
-          </label>
+          </div>
         )}
         {setting.type === FilterSettingType.INTEGER && (
           <>
-            <label>
+            <div className="setting-option">
               Minimum value:{' '}
               <input
                 type="number"
                 value={setting.minValue}
                 onChange={e => (setting.minValue = parseInt(e.target.value))}
               />
-            </label>
-            <label>
+            </div>
+            <div className="setting-option">
               Maximum value:{' '}
               <input
                 type="number"
                 value={setting.maxValue}
                 onChange={e => (setting.maxValue = parseInt(e.target.value))}
               />
-            </label>
-            <label>
+            </div>
+            <div className="setting-option">
               Step:{' '}
               <input
                 type="number"
                 value={setting.step}
                 onChange={e => (setting.step = parseInt(e.target.value))}
               />
-            </label>
+            </div>
           </>
         )}
         {setting.type === FilterSettingType.FLOAT && (
           <>
-            <label>
+            <div className="setting-option">
               Minimum value:{' '}
               <input
                 type="number"
                 value={setting.minValue}
                 onChange={e => (setting.minValue = parseFloat(e.target.value))}
               />
-            </label>
-            <label>
+            </div>
+            <div className="setting-option">
               Maximum value:{' '}
               <input
                 type="number"
                 value={setting.maxValue}
                 onChange={e => (setting.maxValue = parseFloat(e.target.value))}
               />
-            </label>
-            <label>
+            </div>
+            <div className="setting-option">
               Step:{' '}
               <input
                 type="number"
                 value={setting.step}
                 onChange={e => (setting.step = parseFloat(e.target.value))}
               />
-            </label>
+            </div>
           </>
         )}
         {setting.type === FilterSettingType.OFFSET && (
-          <label>
+          <div className="setting-option">
             Toggle color:{' '}
             <ColorPicker
               value={setting.color}
               onChange={result => (setting.color = result)}
             />
-          </label>
+          </div>
         )}
         {setting.type === FilterSettingType.SELECT && (
-          <label>
+          <div className="setting-option">
             Options:
             <div>
               {setting.selectValues?.map(value => (
@@ -267,15 +267,15 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
                   >
                     <BsTrash /> Delete
                   </button>
-                  <label>
+                  <div className="setting-option">
                     Name:{' '}
                     <input
                       type="text"
                       value={value.name}
                       onChange={e => (value.name = e.target.value)}
                     />
-                  </label>
-                  <label>
+                  </div>
+                  <div className="setting-option">
                     Value:{' '}
                     <input
                       type="number"
@@ -283,7 +283,7 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
                       value={value.value}
                       onChange={e => (value.value = parseInt(e.target.value))}
                     />
-                  </label>
+                  </div>
                 </div>
               ))}
               <button
@@ -301,7 +301,7 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
                 <BsPlus /> Add a new option
               </button>
             </div>
-          </label>
+          </div>
         )}
       </div>
     );

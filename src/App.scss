@@ -401,7 +401,7 @@ span.error-icon {
   padding: 10px;
   margin-bottom: 10px;
 
-  label {
+  .setting-option {
     display: grid;
     grid-template-columns: 150px 1fr;
     margin: 5px 0;
@@ -452,16 +452,9 @@ span.error-icon {
   width: 400px;
   margin: 0;
   --react-var-ui-label-border-color: transparent;
-  --react-var-ui-label-background-hover-color: #292930;
 
   &-xy-space {
     height: 150px;
-  }
-
-  &-slider {
-    span {
-      text-align: right;
-    }
   }
 }
 
