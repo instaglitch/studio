@@ -96,6 +96,14 @@ class ProjectStore {
     document.body.appendChild(this.fileInput);
 
     this.loadImage('/preview.jpg');
+
+    if (localStorage.getItem('instaglitch_studio_backup')) {
+      try {
+        this.fromJson(
+          JSON.parse(localStorage.getItem('instaglitch_studio_backup')!)
+        );
+      } catch {}
+    }
   }
 
   buildJson(): Filter {
@@ -158,23 +166,8 @@ class ProjectStore {
       this.loading = false;
 
       const filter: Filter = JSON.parse(reader.result as string);
-      if (!filter.vertexShader && !filter.fragmentShader) {
-        // TODO: Display error.
-        return;
-      }
-
-      this.id = filter.id;
-      this.name = filter.name;
-      this.description = filter.description;
-      this.fragmentShader = filter.fragmentShader || defaultFragmentShader;
-      this.vertexShader = filter.vertexShader || defaultVertexShader;
-      this.settings = filter.settings || [];
-      this.settingValues = {};
-      for (const setting of this.settings) {
-        this.settingValues[setting.key] = setting.defaultValue;
-      }
+      this.fromJson(filter);
       this.tab = 'fragment';
-      this.requestPreviewRender();
     });
 
     reader.addEventListener('error', () => {
@@ -214,6 +207,25 @@ class ProjectStore {
     }
   }
 
+  fromJson(filter: Filter) {
+    if (!filter.vertexShader && !filter.fragmentShader) {
+      // TODO: Display error.
+      return;
+    }
+
+    this.id = filter.id;
+    this.name = filter.name;
+    this.description = filter.description;
+    this.fragmentShader = filter.fragmentShader || defaultFragmentShader;
+    this.vertexShader = filter.vertexShader || defaultVertexShader;
+    this.settings = filter.settings || [];
+    this.settingValues = {};
+    for (const setting of this.settings) {
+      this.settingValues[setting.key] = setting.defaultValue;
+    }
+    this.requestPreviewRender();
+  }
+
   reset() {
     this.id = uuid();
     this.name = 'Untitled';
@@ -246,6 +258,10 @@ class ProjectStore {
   }
 
   requestPreviewRender() {
+    localStorage.setItem(
+      'instaglitch_studio_backup',
+      JSON.stringify(this.buildJson())
+    );
     requestAnimationFrame(() => this.renderCurrentProject());
   }
 
