@@ -47,6 +47,7 @@ function calculatePreviewSize(width: number, height: number, maxSize: number) {
 }
 
 class ProjectStore {
+  id = uuid();
   name = 'Untitled';
   description?: string;
   fragmentShader = defaultFragmentShader;
@@ -98,14 +99,32 @@ class ProjectStore {
   }
 
   buildJson(): Filter {
-    return {
-      id: uuid(),
+    const json: Filter = {
+      id: this.id,
       name: this.name,
       description: this.description,
-      settings: this.settings,
+      settings: this.settings.filter(setting => !!setting.key),
       vertexShader: this.vertexShader,
       fragmentShader: this.fragmentShader,
     };
+
+    if (!json.description) {
+      delete json['description'];
+    }
+
+    if (json.vertexShader === defaultVertexShader) {
+      delete json['vertexShader'];
+    }
+
+    if (json.fragmentShader === defaultFragmentShader) {
+      delete json['fragmentShader'];
+    }
+
+    if (json.settings?.length === 0) {
+      delete json['settings'];
+    }
+
+    return json;
   }
 
   save() {
@@ -144,6 +163,7 @@ class ProjectStore {
         return;
       }
 
+      this.id = filter.id;
       this.name = filter.name;
       this.description = filter.description;
       this.fragmentShader = filter.fragmentShader || defaultFragmentShader;
@@ -195,6 +215,7 @@ class ProjectStore {
   }
 
   reset() {
+    this.id = uuid();
     this.name = 'Untitled';
     this.description = undefined;
     this.fragmentShader = defaultFragmentShader;
