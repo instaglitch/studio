@@ -408,6 +408,9 @@ span.error-icon {
     grid-template-columns: 150px 1fr;
     margin: 5px 0;
   }
+
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
 }
 
 .setting,
