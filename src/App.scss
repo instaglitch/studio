@@ -395,6 +395,21 @@ span.error-icon {
   padding: 20px;
 }
 
+.editor-settings {
+  input,
+  select {
+    background: #11111a;
+    color: white;
+    border: 1px solid #33333a;
+  }
+
+  label {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    margin: 5px 0;
+  }
+}
+
 .setting,
 .select-value {
   background: rgba(0, 0, 0, 0.2);
@@ -405,13 +420,6 @@ span.error-icon {
     display: grid;
     grid-template-columns: 150px 1fr;
     margin: 5px 0;
-
-    input,
-    select {
-      background: #11111a;
-      color: white;
-      border: 1px solid #33333a;
-    }
   }
 }
 

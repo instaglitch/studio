@@ -350,8 +350,28 @@ export const SettingsEditor: React.FC = observer(() => {
   };
 
   return (
-    <div className="editor panel flex">
+    <div className="editor panel flex editor-settings">
       <div className="section">
+        <h2>Filter information</h2>
+        <label>
+          Filter name:{' '}
+          <input
+            type="text"
+            value={projectStore.name}
+            onChange={e => (projectStore.name = e.target.value)}
+          />
+        </label>
+        <label>
+          Filter description:{' '}
+          <input
+            type="text"
+            value={projectStore.description}
+            onChange={e => (projectStore.description = e.target.value)}
+          />
+        </label>
+      </div>
+      <div className="section">
+        <h2>Settings</h2>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided, snapshot) => (

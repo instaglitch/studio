@@ -43,8 +43,8 @@ export interface Filter {
   name: string;
   description?: string;
   settings?: FilterSetting[];
-  fragmentShader: string;
-  vertexShader: string;
+  fragmentShader?: string;
+  vertexShader?: string;
 }
 
 export interface FilterLayer extends Layer {
