@@ -113,8 +113,8 @@ class ProjectStore {
       name: this.name,
       description: this.description,
       settings: this.settings.filter(setting => !!setting.key),
-      vertexShader: this.vertexShader,
-      fragmentShader: this.fragmentShader,
+      vertexShader: this.vertexShader.replaceAll('\t', '  '),
+      fragmentShader: this.fragmentShader.replaceAll('\t', '  '),
     };
 
     if (!json.description) {
