@@ -93,6 +93,9 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
                   setting.defaultValue = undefined;
                   setting.selectValues = [];
                   break;
+                case FilterSettingType.ANGLE:
+                  setting.defaultValue = 0.0;
+                  break;
               }
 
               projectStore.settingValues[setting.name] = setting.defaultValue;
@@ -107,6 +110,7 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
             </option>
             <option value={FilterSettingType.SELECT}>Select</option>
             <option value={FilterSettingType.COLOR}>Color</option>
+            <option value={FilterSettingType.ANGLE}>Angle</option>
           </select>
         </div>
         <div className="setting-option">
@@ -125,68 +129,69 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
             onChange={e => (setting.description = e.target.value)}
           />
         </div>
-        {setting.type !== FilterSettingType.OFFSET && (
-          <div className="setting-option">
-            Default value:
-            {setting.type === FilterSettingType.BOOLEAN && (
-              <input
-                type="checkbox"
-                checked={setting.defaultValue}
-                onChange={e => (setting.defaultValue = e.target.checked)}
-              />
-            )}
-            {setting.type === FilterSettingType.FLOAT && (
-              <input
-                type="number"
-                step={setting.step || 0.01}
-                value={setting.defaultValue}
-                max={setting.maxValue}
-                min={setting.minValue}
-                onChange={e =>
-                  (setting.defaultValue = parseFloat(e.target.value))
-                }
-              />
-            )}
-            {setting.type === FilterSettingType.INTEGER && (
-              <input
-                type="number"
-                step={setting.step || 1}
-                value={setting.defaultValue}
-                max={setting.maxValue}
-                min={setting.minValue}
-                onChange={e =>
-                  (setting.defaultValue = parseInt(e.target.value))
-                }
-              />
-            )}
-            {setting.type === FilterSettingType.COLOR && (
-              <ColorPicker
-                value={setting.defaultValue}
-                onChange={result => (setting.defaultValue = result)}
-              />
-            )}
-            {setting.type === FilterSettingType.SELECT &&
-              setting.selectValues?.length === 0 && (
-                <span>Add some options first.</span>
+        {setting.type !== FilterSettingType.OFFSET &&
+          setting.type !== FilterSettingType.ANGLE && (
+            <div className="setting-option">
+              Default value:
+              {setting.type === FilterSettingType.BOOLEAN && (
+                <input
+                  type="checkbox"
+                  checked={setting.defaultValue}
+                  onChange={e => (setting.defaultValue = e.target.checked)}
+                />
               )}
-            {setting.type === FilterSettingType.SELECT &&
-              !!setting.selectValues &&
-              setting.selectValues.length > 0 && (
-                <select
-                  onChange={e => {
-                    setting.defaultValue = parseInt(e.target.value);
-                  }}
+              {setting.type === FilterSettingType.FLOAT && (
+                <input
+                  type="number"
+                  step={setting.step || 0.01}
                   value={setting.defaultValue}
-                >
-                  {setting.selectValues.map(value => (
-                    <option key={value.id} value={value.value}>
-                      {value.name}
-                    </option>
-                  ))}
-                </select>
+                  max={setting.maxValue}
+                  min={setting.minValue}
+                  onChange={e =>
+                    (setting.defaultValue = parseFloat(e.target.value))
+                  }
+                />
               )}
-          </div>
-        )}
+              {setting.type === FilterSettingType.INTEGER && (
+                <input
+                  type="number"
+                  step={setting.step || 1}
+                  value={setting.defaultValue}
+                  max={setting.maxValue}
+                  min={setting.minValue}
+                  onChange={e =>
+                    (setting.defaultValue = parseInt(e.target.value))
+                  }
+                />
+              )}
+              {setting.type === FilterSettingType.COLOR && (
+                <ColorPicker
+                  value={setting.defaultValue}
+                  onChange={result => (setting.defaultValue = result)}
+                />
+              )}
+              {setting.type === FilterSettingType.SELECT &&
+                setting.selectValues?.length === 0 && (
+                  <span>Add some options first.</span>
+                )}
+              {setting.type === FilterSettingType.SELECT &&
+                !!setting.selectValues &&
+                setting.selectValues.length > 0 && (
+                  <select
+                    onChange={e => {
+                      setting.defaultValue = parseInt(e.target.value);
+                    }}
+                    value={setting.defaultValue}
+                  >
+                    {setting.selectValues.map(value => (
+                      <option key={value.id} value={value.value}>
+                        {value.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+            </div>
+          )}
         {setting.type === FilterSettingType.INTEGER && (
           <>
             <div className="setting-option">

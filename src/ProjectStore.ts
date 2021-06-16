@@ -20,6 +20,7 @@ export function uniformType(type: FilterSettingType) {
     case FilterSettingType.OFFSET:
       return 'vec2';
     case FilterSettingType.FLOAT:
+    case FilterSettingType.ANGLE:
       return 'float';
     case FilterSettingType.INTEGER:
     case FilterSettingType.SELECT:
