@@ -16,7 +16,7 @@ body {
 }
 
 .panel {
-  background: #33333a;
+  background: #22222a;
 }
 
 .menu {
@@ -53,14 +53,14 @@ body {
   padding-left: 5px;
 
   .tab {
-    background: #44444a;
+    background: #33333a;
     padding: 0 5px;
     margin-right: 5px;
     display: inline-flex;
     align-items: center;
 
     &.selected {
-      background: #55555a;
+      background: #44444a;
     }
 
     button {
@@ -73,7 +73,7 @@ body {
 
 button {
   border: none;
-  background: #44444a;
+  background: #33333a;
   color: #ddd;
   border-radius: 4px;
   padding: 5px 10px;
@@ -81,7 +81,7 @@ button {
 
   &:not(:disabled):hover,
   &:not(:disabled).selected {
-    background: #55555a;
+    background: #44444a;
   }
 
   &:disabled {
@@ -137,35 +137,6 @@ button {
   }
 }
 
-.layers {
-  .layer {
-    padding: 10px;
-    border-bottom: 1px solid #44444a;
-    display: flex;
-    align-items: center;
-
-    &.selected {
-      background: #44444a;
-    }
-
-    button {
-      line-height: 0;
-      padding: 5px;
-      background: none;
-      margin-right: 10px;
-    }
-  }
-}
-
-.layer-actions {
-  margin-top: 5px;
-
-  button {
-    margin-right: 5px;
-    line-height: 0;
-  }
-}
-
 .lower-opacity {
   opacity: 0.5;
 }
@@ -202,7 +173,7 @@ button {
 }
 
 .modal {
-  background: #33333a;
+  background: #22222a;
   box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.3);
   width: 600px;
 
@@ -332,7 +303,7 @@ a {
 
 .editor {
   position: relative;
-  background: #282a36;
+  background: #22222a;
 }
 
 .react-codemirror2 {
@@ -350,6 +321,11 @@ a {
   right: 0;
   bottom: 0;
   height: 100%;
+}
+
+.cm-s-dracula.cm-s-dracula.CodeMirror,
+.cm-s-dracula.cm-s-dracula .CodeMirror-gutters {
+  background: #22222a !important;
 }
 
 .CodeMirror-gutter.errors {
@@ -400,7 +376,7 @@ span.error-icon {
   select {
     background: #11111a;
     color: white;
-    border: 1px solid #33333a;
+    border: 1px solid #22222a;
   }
 
   label {
