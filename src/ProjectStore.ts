@@ -242,7 +242,7 @@ class ProjectStore {
 
   openFilePicker(mode: FilePickerMode) {
     if (mode === 'project') {
-      this.fileInput.accept = '.instaglitch-filter.json';
+      this.fileInput.accept = 'application/json';
     } else {
       this.fileInput.accept = 'image/*';
     }
