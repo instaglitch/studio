@@ -351,7 +351,8 @@ export const SettingsEditor: React.FC = observer(() => {
     );
 
     projectStore.settings = settings;
-    projectStore.requestPreviewRender();
+    projectStore.updateShader();
+    projectStore.requestDebouncedPreviewRender();
   };
 
   return (

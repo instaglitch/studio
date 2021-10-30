@@ -13,6 +13,7 @@ export const VertexShaderEditor: React.FC = observer(() => {
         value={projectStore.vertexShader}
         onChange={value => {
           projectStore.vertexShader = value;
+          projectStore.updateShader();
           projectStore.requestDebouncedPreviewRender();
         }}
         errors={projectStore.vertexShaderErrors}

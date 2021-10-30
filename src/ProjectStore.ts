@@ -224,6 +224,7 @@ class ProjectStore {
     for (const setting of this.settings) {
       this.settingValues[setting.key] = setting.defaultValue;
     }
+    this.updateShader();
     this.requestPreviewRender();
   }
 
@@ -238,6 +239,7 @@ class ProjectStore {
     this.tab = 'fragment';
     this.settings = [];
     this.settingValues = {};
+    this.updateShader();
   }
 
   openFilePicker(mode: FilePickerMode) {
@@ -256,6 +258,38 @@ class ProjectStore {
     }
 
     timeout = setTimeout(() => this.requestPreviewRender(), 1000);
+  }
+
+  updateShader() {
+    localStorage.setItem(
+      'instaglitch_studio_backup',
+      JSON.stringify(this.buildJson())
+    );
+
+    const glue = this.glue;
+    let shaderPrefix = '';
+
+    for (const setting of this.settings) {
+      if (!setting.key) {
+        continue;
+      }
+
+      shaderPrefix += `uniform ${uniformType(setting.type)} ${setting.key};\n`;
+    }
+
+    glue.deregisterProgram('current');
+    try {
+      this.fragmentShaderErrors = {};
+      this.vertexShaderErrors = {};
+      glue.registerProgram(
+        'current',
+        shaderPrefix + this.fragmentShader,
+        shaderPrefix + this.vertexShader
+      );
+    } catch (e) {
+      this.fragmentShaderErrors = e.fragmentShaderErrors;
+      this.vertexShaderErrors = e.vertexShaderErrors;
+    }
   }
 
   requestPreviewRender() {
@@ -298,17 +332,8 @@ class ProjectStore {
     }
 
     try {
-      this.fragmentShaderErrors = {};
-      this.vertexShaderErrors = {};
-      glue.apply(
-        shaderPrefix + this.fragmentShader,
-        shaderPrefix + this.vertexShader,
-        uniforms
-      );
-    } catch (e) {
-      this.fragmentShaderErrors = e.fragmentShaderErrors;
-      this.vertexShaderErrors = e.vertexShaderErrors;
-    }
+      glue.program('current')?.apply(uniforms);
+    } catch (e) {}
     glue.render();
   }
 }

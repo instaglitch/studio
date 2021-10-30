@@ -13,6 +13,7 @@ export const FragmentShaderEditor: React.FC = observer(() => {
         value={projectStore.fragmentShader}
         onChange={value => {
           projectStore.fragmentShader = value;
+          projectStore.updateShader();
           projectStore.requestDebouncedPreviewRender();
         }}
         errors={projectStore.fragmentShaderErrors}
