@@ -299,7 +299,7 @@ a {
 
 .workspace {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 10fr 12fr;
   flex: 1;
 }
 
@@ -435,12 +435,12 @@ span.error-icon {
 }
 
 .react-var-ui {
-  position: absolute;
-  top: 0;
-  right: 0;
+  height: 100%;
   width: 400px;
   margin: 0;
   --react-var-ui-label-border-color: transparent;
+  background: #22222a;
+  border-left: 2px solid #11111a;
 
   &-xy-space {
     height: 150px;

@@ -10,7 +10,6 @@ export const Preview: React.FC = observer(() => {
       <div className="preview-wrap">
         <PreviewCanvas />
       </div>
-      <PreviewSettings />
     </>
   );
 });

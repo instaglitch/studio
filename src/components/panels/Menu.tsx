@@ -24,11 +24,6 @@ export const Menu: React.FC = observer(() => {
       <li>
         <button onClick={() => projectStore.renderCurrentProject()}>Run</button>
       </li>
-      <li>
-        <button onClick={() => projectStore.openFilePicker('image')}>
-          Replace preview image
-        </button>
-      </li>
     </ul>
   );
 });

@@ -9,6 +9,7 @@ import {
   VarXY,
   VarSelect,
   VarAngle,
+  VarImage,
 } from 'react-var-ui';
 
 import { useProjectStore } from '../../ProjectStore';
@@ -19,12 +20,20 @@ export const PreviewSettings: React.FC = observer(() => {
 
   return (
     <VarUI
-      values={toJS(projectStore.settingValues)}
+      values={{
+        ...toJS(projectStore.settingValues),
+        _image: projectStore.image?.src,
+      }}
       updateValues={(data: any) => {
         for (const setting of projectStore.settings!) {
           if (setting.type === FilterSettingType.SELECT) {
             data[setting.key] = parseInt(data[setting.key]);
           }
+        }
+
+        console.log(data._image);
+        if (data._image !== projectStore.image?.src) {
+          projectStore.loadImage(data._image);
         }
 
         projectStore.settingValues = data;
@@ -120,6 +129,7 @@ export const PreviewSettings: React.FC = observer(() => {
 
         return null;
       })}
+      <VarImage label="Preview image" path="_image" />
     </VarUI>
   );
 });
