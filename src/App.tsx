@@ -2,7 +2,6 @@ import React from 'react';
 
 import './glsl';
 import './App.scss';
-import 'rc-slider/assets/index.css';
 
 import { Tabs } from './components/panels/Tabs';
 import { Menu } from './components/panels/Menu';

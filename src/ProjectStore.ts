@@ -286,7 +286,7 @@ class ProjectStore {
         shaderPrefix + this.fragmentShader,
         shaderPrefix + this.vertexShader
       );
-    } catch (e) {
+    } catch (e: any) {
       this.fragmentShaderErrors = e.fragmentShaderErrors;
       this.vertexShaderErrors = e.vertexShaderErrors;
     }
