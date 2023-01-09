@@ -31,7 +31,6 @@ export const PreviewSettings: React.FC = observer(() => {
           }
         }
 
-        console.log(data._image);
         if (data._image !== projectStore.image?.src) {
           projectStore.loadImage(data._image);
         }
@@ -80,6 +79,7 @@ export const PreviewSettings: React.FC = observer(() => {
                 label={name}
                 key={setting.id}
                 defaultValue={setting.defaultValue}
+                alpha={setting.alpha}
               />
             );
           case FilterSettingType.BOOLEAN:

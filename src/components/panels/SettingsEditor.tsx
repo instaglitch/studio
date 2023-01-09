@@ -65,6 +65,7 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
               setting.step = undefined;
               setting.color = undefined;
               setting.selectValues = undefined;
+              setting.alpha = undefined;
 
               switch (setting.type) {
                 case FilterSettingType.INTEGER:
@@ -81,6 +82,7 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
                   break;
                 case FilterSettingType.COLOR:
                   setting.defaultValue = '#000000FF';
+                  setting.alpha = false;
                   break;
                 case FilterSettingType.BOOLEAN:
                   setting.defaultValue = false;
@@ -254,6 +256,16 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
             <ColorPicker
               value={setting.color}
               onChange={result => (setting.color = result)}
+            />
+          </div>
+        )}
+        {setting.type === FilterSettingType.COLOR && (
+          <div className="setting-option">
+            Show alpha in color picker:{' '}
+            <input
+              type="checkbox"
+              checked={setting.alpha}
+              onChange={e => (setting.alpha = e.target.checked)}
             />
           </div>
         )}

@@ -36,6 +36,7 @@ export interface FilterSetting {
   maxValue?: number;
   color?: string;
   step?: number;
+  alpha?: boolean; // Only allowed for settings of type COLOR.
   selectValues?: FilterSettingSelectValue[];
 }
 
