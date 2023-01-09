@@ -7862,10 +7862,10 @@ react-use-pointer-drag@^0.0.1:
   resolved "https://registry.yarnpkg.com/react-use-pointer-drag/-/react-use-pointer-drag-0.0.1.tgz#daab278077b210b5a3eca4542f64e8cef0f0c2c5"
   integrity sha512-nJQqXhxfvlSGXbtlAH0i2tei8cVf+qzD+Acp3LO/NB6F/nehPQeBp/1uf+Qdj7Hwt8Ia0jwB+lP/NGRszW6X2g==
 
-react-var-ui@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/react-var-ui/-/react-var-ui-1.2.1.tgz#797cbdb1996949e1fe41b8515cd425b957fe8196"
-  integrity sha512-Ihl3t4/9hCQSQx4CkRQCHgc295ec6RsBIbKyAHQvyacC23chaD0cw8IA88qX06d2OTHp5lwa19WJGxHpDJYwXA==
+react-var-ui@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/react-var-ui/-/react-var-ui-1.2.2.tgz#4f7ba0b715cea82f577f73a5d602e8805ff14172"
+  integrity sha512-DsLx+3mm2QYxH/jy25vbO9jgLryrlxEprSPCf2NkdtJ3NgQ4PGvhLNMIxeqDWDQlsaUA15uuP3/oZ4WtWMHSdg==
   dependencies:
     filesize "^8.0.6"
     lodash.clonedeep "^4.0.0"
