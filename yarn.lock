@@ -1094,10 +1094,10 @@ functions-have-names@^1.2.2:
   resolved "https://registry.yarnpkg.com/functions-have-names/-/functions-have-names-1.2.3.tgz#0404fe4ee2ba2f607f0e0ec3c80bae994133b834"
   integrity sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==
 
-fxglue@^0.0.11:
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/fxglue/-/fxglue-0.0.11.tgz#e4c9e2993e5b981c2d03fe23c2649cdf6df01d4b"
-  integrity sha512-wlAIKPkMPhHYTcwST/rUvIiVeWiETrHdz5TaDStwCXVShDP/n+xaZ8TaTVdCwFqbZNj1R3aXr37lmw9V710vKA==
+fxglue@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/fxglue/-/fxglue-0.2.0.tgz#ecd07853321697c310d7054e6161d92f81aeb3eb"
+  integrity sha512-CkYBwLqYj3SUWbtCjyKfJLgDfN3jRAAmZY4MqIotPYeLXi4ts7pEFiRAEvXtzQn+nWRuEewHK/07xXXVGL4rHw==
 
 gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"

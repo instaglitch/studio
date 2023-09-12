@@ -17,7 +17,7 @@
     "clsx": "^1.2.1",
     "codemirror": "^5.65.9",
     "fitool": "^1.0.3",
-    "fxglue": "^0.0.11",
+    "fxglue": "^0.2.0",
     "husky": "^8.0.2",
     "lint-staged": "^13.0.3",
     "mobx": "^6.7.0",
