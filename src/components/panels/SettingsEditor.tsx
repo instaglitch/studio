@@ -9,7 +9,7 @@ import {
 import { BsPlus, BsTrash } from 'react-icons/bs';
 import { v4 as uuid } from 'uuid';
 
-import { useProjectStore } from '../../ProjectStore';
+import { projectStore } from '../../ProjectStore';
 import { FilterSetting, FilterSettingType } from '../../types';
 import { ColorPicker } from '../common/ColorPicker';
 
@@ -23,8 +23,6 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number) {
 
 const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
   ({ setting }) => {
-    const projectStore = useProjectStore();
-
     return (
       <div className="setting">
         <button
@@ -326,8 +324,6 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
 );
 
 export const SettingsEditorList: React.FC = observer(() => {
-  const projectStore = useProjectStore();
-
   return (
     <>
       {projectStore.settings.map((setting, index) => (
@@ -348,8 +344,6 @@ export const SettingsEditorList: React.FC = observer(() => {
 });
 
 export const SettingsEditor: React.FC = observer(() => {
-  const projectStore = useProjectStore();
-
   const onDragEnd = (result: DropResult) => {
     // dropped outside the list
     if (!result.destination) {

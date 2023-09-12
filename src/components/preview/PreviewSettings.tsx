@@ -12,12 +12,10 @@ import {
   VarImage,
 } from 'react-var-ui';
 
-import { useProjectStore } from '../../ProjectStore';
+import { projectStore } from '../../ProjectStore';
 import { FilterSettingType } from '../../types';
 
 export const PreviewSettings: React.FC = observer(() => {
-  const projectStore = useProjectStore();
-
   return (
     <VarUI
       values={{

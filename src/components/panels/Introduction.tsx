@@ -1,11 +1,9 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 
-import { uniformType, useProjectStore } from '../../ProjectStore';
+import { uniformType, projectStore } from '../../ProjectStore';
 
 export const Introduction: React.FC = observer(() => {
-  const projectStore = useProjectStore();
-
   return (
     <div className="editor panel flex intro">
       <h2>Welcome to Instaglitch Studio!</h2>

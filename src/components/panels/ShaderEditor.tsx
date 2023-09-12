@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
 import { Controlled as CMControlled } from 'react-codemirror2';
-import { useProjectStore } from '../../ProjectStore';
+import { projectStore } from '../../ProjectStore';
 
 export interface ShaderEditorProps {
   value: string;
@@ -12,7 +12,6 @@ export interface ShaderEditorProps {
 export const ShaderEditor: React.FC<ShaderEditorProps> = observer(
   ({ value, onChange, errors }) => {
     const [editor, setEditor] = useState<CodeMirror.Editor>();
-    const projectStore = useProjectStore();
 
     useEffect(() => {
       if (!editor) {

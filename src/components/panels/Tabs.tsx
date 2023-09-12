@@ -2,11 +2,9 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import clsx from 'clsx';
 
-import { useProjectStore } from '../../ProjectStore';
+import { projectStore } from '../../ProjectStore';
 
 const Tab: React.FC<{ id: string; name: string }> = observer(({ id, name }) => {
-  const projectStore = useProjectStore();
-
   return (
     <div
       className={clsx('tab', {
