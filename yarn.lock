@@ -1484,21 +1484,6 @@ lodash-es@^4.17.15:
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
   integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
 
-lodash.clonedeep@^4.0.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
-  integrity sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==
-
-lodash.result@^4.0.0:
-  version "4.5.2"
-  resolved "https://registry.yarnpkg.com/lodash.result/-/lodash.result-4.5.2.tgz#cb45b27fb914eaa8d8ee6f0ce7b2870b87cb70aa"
-  integrity sha512-dlgJvozORK2oE4jXzTGIsJz9Vk6huNAINxYYvWc/R44x3/ah/F7OkNwr9c0wO2poh2cbdjS0jF3j8VgyCEOVfw==
-
-lodash.set@^4.0.0:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/lodash.set/-/lodash.set-4.3.2.tgz#d8757b1da807dde24816b0d6a84bea1a76230b23"
-  integrity sha512-4hNPN5jlm/N/HLMCO43v8BXKq9Z7QdAGc/VGrRD61w8gN9g/6jF9A4L1pbUgBLCffi0w9VsXfTOij5x8iTyFvg==
-
 lodash@^4.0.1, lodash@^4.17.15:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
@@ -1737,6 +1722,11 @@ prop-types@^15.5.10, prop-types@^15.7.2:
     object-assign "^4.1.1"
     react-is "^16.13.1"
 
+radash@^11.0.0:
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/radash/-/radash-11.0.0.tgz#925698e94b554336fc159c253ac33a9a49881835"
+  integrity sha512-CRWxTFTDff0IELGJ/zz58yY4BDgyI14qSM5OLNKbCItJrff7m7dXbVF0kWYVCXQtPb3SXIVhXvAImH6eT7VLSg==
+
 raf-schd@^4.0.2:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/raf-schd/-/raf-schd-4.0.3.tgz#5d6c34ef46f8b2a0e880a8fcdb743efc5bfdbc1a"
@@ -1818,22 +1808,20 @@ react-refresh@^0.14.0:
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.14.0.tgz#4e02825378a5f227079554d4284889354e5f553e"
   integrity sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==
 
-react-use-pointer-drag@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/react-use-pointer-drag/-/react-use-pointer-drag-0.1.0.tgz#69fed60ef3603d54358c24c8c53e0c0ae4f7659c"
-  integrity sha512-zkQrayL8uKYiTq/1bAFK+WSeFIIf1ScjaJoUQE4PPrMQS0d4hqz6u97xOubr3ljVb2sDqbvJfCe9cVjffSiizw==
+react-use-pointer-drag@^0.1.1:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/react-use-pointer-drag/-/react-use-pointer-drag-0.1.2.tgz#f5418f8eea6246b8969e93a97790bb995ddd04d5"
+  integrity sha512-Sm53xOun8NEYLFLUvywOSSnzYoxnx79TU2tecOrdhYKkSQyaoxoNvxA1+KtaKxqT/gy2TqxrvrgerkwoeF7S7g==
 
-react-var-ui@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/react-var-ui/-/react-var-ui-1.3.1.tgz#8df2b0ad8d4ddd791ab14f0d81ca22066b6ef4b0"
-  integrity sha512-bpxpYkaDvoPdWWyiugvtOF9JbndCG5VKfi64620sA7YVQI42JIiZZmpPLY3vQb3kVOBxK0fwKVb0HWPuaKj2UA==
+react-var-ui@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/react-var-ui/-/react-var-ui-1.4.3.tgz#71ae57bb10dc9fd348de9816c6f62b813f680b70"
+  integrity sha512-6IOnohA0uBLKX2BWWhgqYRBUihhaQzrXscd7KQ+mPT81nps0oBMPZToxZEvov6g9y5KS22SV+YQUmwlm3Ihm2w==
   dependencies:
     filesize "^8.0.6"
-    lodash.clonedeep "^4.0.0"
-    lodash.result "^4.0.0"
-    lodash.set "^4.0.0"
+    radash "^11.0.0"
     react-color "^2.0.0"
-    react-use-pointer-drag "^0.1.0"
+    react-use-pointer-drag "^0.1.1"
 
 react@^18.2.0:
   version "18.2.0"
