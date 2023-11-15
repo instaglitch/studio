@@ -68,7 +68,9 @@ class ProjectStore {
     })!
   );
   settings: FilterSetting[] = [];
-  settingValues: Record<string, any> = {};
+  settingValues: Record<string, any> = {
+    _image: '/preview.jpg',
+  };
   settingsLineOffset = 0;
 
   constructor() {
@@ -220,7 +222,9 @@ class ProjectStore {
     this.fragmentShader = filter.fragmentShader || defaultFragmentShader;
     this.vertexShader = filter.vertexShader || defaultVertexShader;
     this.settings = filter.settings || [];
-    this.settingValues = {};
+    this.settingValues = {
+      _image: this.settingValues._image,
+    };
     for (const setting of this.settings) {
       this.settingValues[setting.key] = setting.defaultValue;
     }
@@ -238,7 +242,9 @@ class ProjectStore {
     this.vertexShaderErrors = {};
     this.tab = 'fragment';
     this.settings = [];
-    this.settingValues = {};
+    this.settingValues = {
+      _image: this.settingValues._image,
+    };
     this.updateShader();
   }
 

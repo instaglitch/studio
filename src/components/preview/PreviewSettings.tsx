@@ -20,7 +20,6 @@ export const PreviewSettings: React.FC = observer(() => {
     <VarUI
       values={{
         ...toJS(projectStore.settingValues),
-        _image: projectStore.image?.src,
       }}
       updateValues={(data: any) => {
         for (const setting of projectStore.settings!) {
