@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx';
-import React, { useContext } from 'react';
 import { Glue } from 'fxglue';
-import { v4 as uuid } from 'uuid';
+import { nanoid } from 'nanoid';
 import { download } from 'fitool';
 
 import { Filter, FilterSetting, FilterSettingType } from './types';
@@ -48,7 +47,7 @@ function calculatePreviewSize(width: number, height: number, maxSize: number) {
 }
 
 class ProjectStore {
-  id = uuid();
+  id = nanoid();
   name = 'Untitled';
   description?: string;
   fragmentShader = defaultFragmentShader;
@@ -233,7 +232,7 @@ class ProjectStore {
   }
 
   reset() {
-    this.id = uuid();
+    this.id = nanoid();
     this.name = 'Untitled';
     this.description = undefined;
     this.fragmentShader = defaultFragmentShader;

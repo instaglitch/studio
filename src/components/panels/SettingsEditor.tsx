@@ -7,7 +7,7 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 import { BsPlus, BsTrash } from 'react-icons/bs';
-import { v4 as uuid } from 'uuid';
+import { nanoid } from 'nanoid';
 
 import { projectStore } from '../../ProjectStore';
 import { FilterSetting, FilterSettingType } from '../../types';
@@ -306,7 +306,7 @@ const SettingsEditorItem: React.FC<{ setting: FilterSetting }> = observer(
                   setting.selectValues = [
                     ...setting.selectValues!,
                     {
-                      id: uuid(),
+                      id: nanoid(),
                       name: '',
                       value: 0,
                     },
@@ -403,7 +403,7 @@ export const SettingsEditor: React.FC = observer(() => {
             projectStore.settings = [
               ...projectStore.settings,
               {
-                id: uuid(),
+                id: nanoid(),
                 defaultValue: 0.5,
                 key: '',
                 name: '',
